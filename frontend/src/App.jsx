@@ -1,5 +1,3 @@
-// !!! Use NA for temp when temperature 0 or below 
-
 import React, { useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue, query, orderByChild, limitToLast } from 'firebase/database';
@@ -151,19 +149,16 @@ const App = () => {
         )
     } : null;
 
-    // Combine real data with predictions
-    const combinedData = cleanPredictions ? [
-        ...sensorData,
-        ...cleanPredictions.timestamps.map((timestamp, i) => ({
-            timestamp,
-            ph: cleanPredictions.predictions.ph[i],
-            turbidity: cleanPredictions.predictions.turbidity[i],
-            tds: cleanPredictions.predictions.tds[i],
-            temperature: cleanPredictions.predictions.temperature[i],
-            conductivity: cleanPredictions.predictions.conductivity[i],
-            isPrediction: true
-        }))
-    ] : sensorData;
+    // Separate real and predicted data
+    const realData = sensorData;
+    const predictedData = cleanPredictions ? cleanPredictions.timestamps.map((timestamp, i) => ({
+      timestamp,
+      ph: cleanPredictions.predictions.ph[i],
+      turbidity: cleanPredictions.predictions.turbidity[i],
+      tds: cleanPredictions.predictions.tds[i],
+      temperature: cleanPredictions.predictions.temperature[i],
+      conductivity: cleanPredictions.predictions.conductivity[i]
+    })) : [];
 
     return (
       <Card>
@@ -171,12 +166,16 @@ const App = () => {
           <CardTitle>Data Visualizations</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* pH Chart */}
+          <div className="grid grid-cols-2 gap-8">
+            {/* Column Headers */}
+            <h2 className="text-xl font-bold mb-6">Real-time Data</h2>
+            <h2 className="text-xl font-bold mb-6">Predicted Data</h2>
+
+            {/* pH Charts */}
             <div className="h-[300px]">
               <h3 className="text-lg font-semibold mb-4">pH Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={combinedData}>
+                <LineChart data={realData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="timestamp" 
@@ -186,23 +185,45 @@ const App = () => {
                   />
                   <YAxis />
                   <Tooltip />
-                  <Legend />
                   <Line 
                     type="monotone" 
                     dataKey="ph" 
                     stroke="#8884d8"
-                    strokeDasharray={(d) => d.isPrediction ? "5 5" : "0"}
-                    strokeWidth={(d) => d.isPrediction ? 2 : 3}
+                    strokeWidth={3}
+                    connectNulls
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="h-[300px]">
+              <h3 className="text-lg font-semibold mb-4">pH Predictions</h3>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={predictedData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="timestamp" 
+                    tick={{ fontSize: 12 }}
+                    angle={-45}
+                    textAnchor="end"
+                  />
+                  <YAxis />
+                  <Tooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="ph" 
+                    stroke="#ff0000"
+                    strokeWidth={2}
+                    connectNulls
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Temperature Chart */}
+            {/* Temperature Charts */}
             <div className="h-[300px]">
               <h3 className="text-lg font-semibold mb-4">Temperature Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={combinedData}>
+                <LineChart data={realData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="timestamp" 
@@ -212,17 +233,45 @@ const App = () => {
                   />
                   <YAxis />
                   <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="temperature" stroke="#82ca9d" />
+                  <Line 
+                    type="monotone" 
+                    dataKey="temperature" 
+                    stroke="#82ca9d"
+                    strokeWidth={3}
+                    connectNulls
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="h-[300px]">
+              <h3 className="text-lg font-semibold mb-4">Temperature Predictions</h3>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={predictedData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="timestamp" 
+                    tick={{ fontSize: 12 }}
+                    angle={-45}
+                    textAnchor="end"
+                  />
+                  <YAxis />
+                  <Tooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="temperature" 
+                    stroke="#ff0000"
+                    strokeWidth={2}
+                    connectNulls
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
 
-            {/* TDS Chart */}
+            {/* TDS Charts */}
             <div className="h-[300px]">
               <h3 className="text-lg font-semibold mb-4">TDS Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={combinedData}>
+                <LineChart data={realData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="timestamp" 
@@ -232,17 +281,45 @@ const App = () => {
                   />
                   <YAxis />
                   <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="tds" stroke="#ffc658" />
+                  <Line 
+                    type="monotone" 
+                    dataKey="tds" 
+                    stroke="#ffc658"
+                    strokeWidth={3}
+                    connectNulls
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="h-[300px]">
+              <h3 className="text-lg font-semibold mb-4">TDS Predictions</h3>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={predictedData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="timestamp" 
+                    tick={{ fontSize: 12 }}
+                    angle={-45}
+                    textAnchor="end"
+                  />
+                  <YAxis />
+                  <Tooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="tds" 
+                    stroke="#ff0000"
+                    strokeWidth={2}
+                    connectNulls
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Turbidity Chart */}
+            {/* Turbidity Charts */}
             <div className="h-[300px]">
               <h3 className="text-lg font-semibold mb-4">Turbidity Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={combinedData}>
+                <LineChart data={realData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="timestamp" 
@@ -252,17 +329,45 @@ const App = () => {
                   />
                   <YAxis />
                   <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="turbidity" stroke="#ff7300" />
+                  <Line 
+                    type="monotone" 
+                    dataKey="turbidity" 
+                    stroke="#ff7300"
+                    strokeWidth={3}
+                    connectNulls
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="h-[300px]">
+              <h3 className="text-lg font-semibold mb-4">Turbidity Predictions</h3>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={predictedData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="timestamp" 
+                    tick={{ fontSize: 12 }}
+                    angle={-45}
+                    textAnchor="end"
+                  />
+                  <YAxis />
+                  <Tooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="turbidity" 
+                    stroke="#ff0000"
+                    strokeWidth={2}
+                    connectNulls
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Conductivity Chart */}
+            {/* Conductivity Charts */}
             <div className="h-[300px]">
               <h3 className="text-lg font-semibold mb-4">Conductivity Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={combinedData}>
+                <LineChart data={realData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="timestamp" 
@@ -272,13 +377,35 @@ const App = () => {
                   />
                   <YAxis />
                   <Tooltip />
-                  <Legend />
                   <Line 
                     type="monotone" 
                     dataKey="conductivity" 
                     stroke="#9c27b0"
-                    strokeDasharray={(d) => d.isPrediction ? "5 5" : "0"}
-                    strokeWidth={(d) => d.isPrediction ? 2 : 3}
+                    strokeWidth={3}
+                    connectNulls
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="h-[300px]">
+              <h3 className="text-lg font-semibold mb-4">Conductivity Predictions</h3>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={predictedData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="timestamp" 
+                    tick={{ fontSize: 12 }}
+                    angle={-45}
+                    textAnchor="end"
+                  />
+                  <YAxis />
+                  <Tooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="conductivity" 
+                    stroke="#ff0000"
+                    strokeWidth={2}
+                    connectNulls
                   />
                 </LineChart>
               </ResponsiveContainer>
