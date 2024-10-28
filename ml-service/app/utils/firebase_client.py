@@ -7,11 +7,30 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Check for required environment variables
+required_env_vars = [
+    "FIREBASE_PROJECT_ID",
+    "FIREBASE_PRIVATE_KEY_ID",
+    "FIREBASE_PRIVATE_KEY",
+    "FIREBASE_CLIENT_EMAIL",
+    "FIREBASE_CLIENT_ID",
+    "FIREBASE_CLIENT_CERT_URL",
+    "FIREBASE_DATABASE_URL"
+]
+
+for var in required_env_vars:
+    if not os.getenv(var):
+        raise EnvironmentError(f"Missing required environment variable: {var}")
+
+private_key = os.getenv("FIREBASE_PRIVATE_KEY")
+if private_key:
+    private_key = private_key.replace('\\n', '\n')
+
 cred = credentials.Certificate({
     "type": "service_account",
     "project_id": os.getenv("FIREBASE_PROJECT_ID"),
     "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
-    "private_key": os.getenv("FIREBASE_PRIVATE_KEY").replace('\\n', '\n'),
+    "private_key": private_key,
     "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
     "client_id": os.getenv("FIREBASE_CLIENT_ID"),
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -36,4 +55,3 @@ def fetch_sensor_data():
     df = df.sort_values('timestamp')
     
     return df
-
