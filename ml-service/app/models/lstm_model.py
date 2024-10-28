@@ -36,15 +36,22 @@ class WaterQualityLSTM:
         self.model.fit(X, y, epochs=50, batch_size=32, verbose=1)
         
     def predict(self, last_sequence, n_steps):
+        print(f"Input sequence shape: {last_sequence.shape}")  # Debug
         # Scale the input sequence
         scaled_sequence = self.scaler.transform(last_sequence)
+        print(f"Scaled sequence shape: {scaled_sequence.shape}")  # Debug
         predictions = []
         current_sequence = scaled_sequence.copy()
         
-        for _ in range(n_steps):
+        for step in range(n_steps):
             # Predict next step
-            scaled_prediction = self.model.predict(current_sequence.reshape(1, *current_sequence.shape))
-            predictions.append(scaled_prediction[0])
+            try:
+                scaled_prediction = self.model.predict(current_sequence.reshape(1, *current_sequence.shape))
+                print(f"Step {step} prediction shape: {scaled_prediction.shape}")  # Debug
+                predictions.append(scaled_prediction[0])
+            except Exception as e:
+                print(f"Prediction failed at step {step}: {str(e)}")  # Debug
+                raise
             
             # Update sequence
             current_sequence = np.roll(current_sequence, -1, axis=0)
@@ -52,7 +59,13 @@ class WaterQualityLSTM:
         
         # Inverse transform predictions
         predictions = np.array(predictions)
-        predictions = self.scaler.inverse_transform(predictions)
+        print(f"All predictions shape before inverse: {predictions.shape}")  # Debug
+        try:
+            predictions = self.scaler.inverse_transform(predictions)
+            print(f"All predictions shape after inverse: {predictions.shape}")  # Debug
+        except Exception as e:
+            print(f"Inverse transform failed: {str(e)}")  # Debug
+            raise
         
         return predictions
     
@@ -63,4 +76,3 @@ class WaterQualityLSTM:
     def load(self, model_path, scaler_path):
         self.model = tf.keras.models.load_model(model_path)
         self.scaler = joblib.load(scaler_path)
-

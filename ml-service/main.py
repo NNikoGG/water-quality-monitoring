@@ -40,13 +40,20 @@ async def get_predictions():
         df = fetch_sensor_data()
         if df.empty:
             return {"error": "No sensor data available"}
-            
+        
+        print(f"Full dataset shape: {df.shape}")  # Debug
+        print(f"Available columns: {df.columns.tolist()}")  # Debug
+        
+        # Check for missing values
+        missing_values = df[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].isnull().sum()
+        print(f"Missing values per column: {missing_values}")  # Debug
+        
         features = df[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].values[-10:]
-        print(f"Input features shape: {features.shape}")  # Debug log
+        print(f"Input features shape: {features.shape}")  # Debug
         
         # Make predictions
         predictions = model.predict(features, n_steps=24)
-        print(f"Raw predictions shape: {predictions.shape}")  # Debug log
+        print(f"Raw predictions shape: {predictions.shape}")  # Debug
         
         # Generate future timestamps
         last_timestamp = df['timestamp'].max()
@@ -76,3 +83,4 @@ async def get_predictions():
     except Exception as e:
         print(f"Prediction error: {str(e)}")  # Debug log
         raise
+
