@@ -27,7 +27,7 @@ except OSError:
     print("No saved model found. Training new model...")
     training_data = fetch_sensor_data()  # Get historical data
     if not training_data.empty:
-        features = training_data[['ph', 'turbidity', 'tds', 'temperature']]
+        features = training_data[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']]
         model.train(features)
         # Save the trained model
         os.makedirs('app/models/saved', exist_ok=True)
