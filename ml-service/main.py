@@ -49,15 +49,19 @@ async def get_predictions():
         for i in range(1, 25)
     ]
     
-    # Format response
+    # Helper function to clean predictions
+    def clean_predictions(arr):
+        return [float(x) if not (np.isnan(x) or np.isinf(x)) else None for x in arr]
+    
+    # Format response with cleaned predictions
     response = {
         "timestamps": future_timestamps,
         "predictions": {
-            "ph": predictions[:, 0].tolist(),
-            "turbidity": predictions[:, 1].tolist(),
-            "tds": predictions[:, 2].tolist(),
-            "temperature": predictions[:, 3].tolist(),
-            "conductivity": predictions[:, 4].tolist()
+            "ph": clean_predictions(predictions[:, 0]),
+            "turbidity": clean_predictions(predictions[:, 1]),
+            "tds": clean_predictions(predictions[:, 2]),
+            "temperature": clean_predictions(predictions[:, 3]),
+            "conductivity": clean_predictions(predictions[:, 4])
         }
     }
     

@@ -140,18 +140,29 @@ const App = () => {
   );
 
   const DataVisualizations = () => {
+    // Clean data before combining
+    const cleanPredictions = predictions ? {
+        ...predictions,
+        predictions: Object.fromEntries(
+            Object.entries(predictions.predictions).map(([key, values]) => [
+                key,
+                values.map(v => v === null ? undefined : v)
+            ])
+        )
+    } : null;
+
     // Combine real data with predictions
-    const combinedData = predictions ? [
-      ...sensorData,
-      ...predictions.timestamps.map((timestamp, i) => ({
-        timestamp,
-        ph: predictions.predictions.ph[i],
-        turbidity: predictions.predictions.turbidity[i],
-        tds: predictions.predictions.tds[i],
-        temperature: predictions.predictions.temperature[i],
-        conductivity: predictions.predictions.conductivity[i],
-        isPrediction: true
-      }))
+    const combinedData = cleanPredictions ? [
+        ...sensorData,
+        ...cleanPredictions.timestamps.map((timestamp, i) => ({
+            timestamp,
+            ph: cleanPredictions.predictions.ph[i],
+            turbidity: cleanPredictions.predictions.turbidity[i],
+            tds: cleanPredictions.predictions.tds[i],
+            temperature: cleanPredictions.predictions.temperature[i],
+            conductivity: cleanPredictions.predictions.conductivity[i],
+            isPrediction: true
+        }))
     ] : sensorData;
 
     return (
