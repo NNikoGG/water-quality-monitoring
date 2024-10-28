@@ -21,6 +21,7 @@ const App = () => {
   const [predictions, setPredictions] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('realtime'); 
 
   useEffect(() => {
     const sensorRef = ref(database, 'sensor_data');
@@ -416,12 +417,74 @@ const App = () => {
     );
   };
 
+  const Navbar = () => (
+    <nav className="bg-white shadow-lg mb-8">
+      <div className="container mx-auto px-4">
+        <div className="flex space-x-4">
+          <button
+            className={`px-4 py-3 text-sm font-medium ${
+              activeTab === 'realtime' 
+                ? 'text-blue-600 border-b-2 border-blue-600' 
+                : 'text-gray-500 hover:text-blue-600'
+            }`}
+            onClick={() => setActiveTab('realtime')}
+          >
+            Real-time Data
+          </button>
+          <button
+            className={`px-4 py-3 text-sm font-medium ${
+              activeTab === 'historical' 
+                ? 'text-blue-600 border-b-2 border-blue-600' 
+                : 'text-gray-500 hover:text-blue-600'
+            }`}
+            onClick={() => setActiveTab('historical')}
+          >
+            Historical Data
+          </button>
+          <button
+            className={`px-4 py-3 text-sm font-medium ${
+              activeTab === 'visualizations' 
+                ? 'text-blue-600 border-b-2 border-blue-600' 
+                : 'text-gray-500 hover:text-blue-600'
+            }`}
+            onClick={() => setActiveTab('visualizations')}
+          >
+            Data Visualizations
+          </button>
+        </div>
+      </div>
+    </nav>
+  );
+
+  const Footer = () => (
+    <footer className="bg-white shadow-lg mt-8 py-8">
+      <div className="container mx-auto px-4">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-4">Created By</h3>
+          <p className="text-gray-600 mb-4">
+            Nitish Gogoi, Abhijit Das, Arnall Saikia, Rajarshi Dutta
+          </p>
+          <h3 className="text-lg font-semibold mb-4">Under the Guidance of</h3>
+          <p className="text-gray-600">
+            Prof D S Pegu, Prof Ankur Jyoti Sarmah
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-8">Water Quality Monitoring Dashboard</h1>
-      <RealtimeData />
-      <DataTable />
-      <DataVisualizations />
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto p-4">
+        <h1 className="text-3xl font-bold mb-8">Water Quality Monitoring Dashboard</h1>
+        <Navbar />
+        
+        {activeTab === 'realtime' && <RealtimeData />}
+        {activeTab === 'historical' && <DataTable />}
+        {activeTab === 'visualizations' && <DataVisualizations />}
+        
+        <Footer />
+      </div>
     </div>
   );
 };
