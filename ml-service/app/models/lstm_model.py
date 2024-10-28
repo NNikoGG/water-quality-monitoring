@@ -36,8 +36,10 @@ class WaterQualityLSTM:
         self.model.fit(X, y, epochs=50, batch_size=32, verbose=1)
         
     def predict(self, last_sequence, n_steps):
+        # Scale the input sequence
+        scaled_sequence = self.scaler.transform(last_sequence)
         predictions = []
-        current_sequence = last_sequence.copy()
+        current_sequence = scaled_sequence.copy()
         
         for _ in range(n_steps):
             # Predict next step
@@ -47,7 +49,7 @@ class WaterQualityLSTM:
             # Update sequence
             current_sequence = np.roll(current_sequence, -1, axis=0)
             current_sequence[-1] = scaled_prediction[0]
-            
+        
         # Inverse transform predictions
         predictions = np.array(predictions)
         predictions = self.scaler.inverse_transform(predictions)

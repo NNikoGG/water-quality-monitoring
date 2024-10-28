@@ -35,34 +35,44 @@ except OSError:
 
 @app.get("/predict")
 async def get_predictions():
-    # Fetch recent data
-    df = fetch_sensor_data()
-    features = df[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].values[-10:]
-    
-    # Make predictions
-    predictions = model.predict(features, n_steps=24)  # Predict next 24 points
-    
-    # Generate future timestamps
-    last_timestamp = df['timestamp'].max()
-    future_timestamps = [
-        (last_timestamp + timedelta(hours=i)).isoformat()
-        for i in range(1, 25)
-    ]
-    
-    # Helper function to clean predictions
-    def clean_predictions(arr):
-        return [float(x) if not (np.isnan(x) or np.isinf(x)) else None for x in arr]
-    
-    # Format response with cleaned predictions
-    response = {
-        "timestamps": future_timestamps,
-        "predictions": {
-            "ph": clean_predictions(predictions[:, 0]),
-            "turbidity": clean_predictions(predictions[:, 1]),
-            "tds": clean_predictions(predictions[:, 2]),
-            "temperature": clean_predictions(predictions[:, 3]),
-            "conductivity": clean_predictions(predictions[:, 4])
+    try:
+        # Fetch recent data
+        df = fetch_sensor_data()
+        if df.empty:
+            return {"error": "No sensor data available"}
+            
+        features = df[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].values[-10:]
+        print(f"Input features shape: {features.shape}")  # Debug log
+        
+        # Make predictions
+        predictions = model.predict(features, n_steps=24)
+        print(f"Raw predictions shape: {predictions.shape}")  # Debug log
+        
+        # Generate future timestamps
+        last_timestamp = df['timestamp'].max()
+        future_timestamps = [
+            (last_timestamp + timedelta(hours=i)).isoformat()
+            for i in range(1, 25)
+        ]
+        
+        # Helper function to clean predictions
+        def clean_predictions(arr):
+            cleaned = [float(x) if not (np.isnan(x) or np.isinf(x)) else None for x in arr]
+            print(f"Cleaned predictions: {cleaned[:5]}...")  # Debug log
+            return cleaned
+        
+        response = {
+            "timestamps": future_timestamps,
+            "predictions": {
+                "ph": clean_predictions(predictions[:, 0]),
+                "turbidity": clean_predictions(predictions[:, 1]),
+                "tds": clean_predictions(predictions[:, 2]),
+                "temperature": clean_predictions(predictions[:, 3]),
+                "conductivity": clean_predictions(predictions[:, 4])
+            }
         }
-    }
-    
-    return response
+        
+        return response
+    except Exception as e:
+        print(f"Prediction error: {str(e)}")  # Debug log
+        raise
