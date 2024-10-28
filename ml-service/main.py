@@ -37,7 +37,7 @@ except OSError:
 async def get_predictions():
     # Fetch recent data
     df = fetch_sensor_data()
-    features = df[['ph', 'turbidity', 'tds', 'temperature']].values[-10:]
+    features = df[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].values[-10:]
     
     # Make predictions
     predictions = model.predict(features, n_steps=24)  # Predict next 24 points
@@ -56,7 +56,8 @@ async def get_predictions():
             "ph": predictions[:, 0].tolist(),
             "turbidity": predictions[:, 1].tolist(),
             "tds": predictions[:, 2].tolist(),
-            "temperature": predictions[:, 3].tolist()
+            "temperature": predictions[:, 3].tolist(),
+            "conductivity": predictions[:, 4].tolist()
         }
     }
     

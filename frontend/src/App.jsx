@@ -8,9 +8,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "./components/ui/card";
 
 // Firebase configuration
 const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-  };
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+};
   
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
@@ -50,7 +51,7 @@ const App = () => {
     const fetchPredictions = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('https://your-render-app.onrender.com/predict'); // URL CHANGE
+        const response = await fetch('https://water-quality-ml-service.onrender.com/predict'); 
         const data = await response.json();
         setPredictions(data);
       } catch (error) {
@@ -72,7 +73,7 @@ const App = () => {
         <CardTitle>Real-time Sensor Data</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {latestData && (
             <>
               <div className="p-4 bg-blue-100 rounded-lg">
@@ -90,6 +91,10 @@ const App = () => {
               <div className="p-4 bg-red-100 rounded-lg">
                 <h3 className="text-lg font-semibold">Temperature</h3>
                 <p className="text-2xl">{latestData.temperature.toFixed(2)} °C</p>
+              </div>
+              <div className="p-4 bg-purple-100 rounded-lg">
+                <h3 className="text-lg font-semibold">Conductivity</h3>
+                <p className="text-2xl">{latestData.conductivity.toFixed(2)} μS/cm</p>
               </div>
             </>
           )}
@@ -113,6 +118,7 @@ const App = () => {
                 <th className="p-2">Turbidity (NTU)</th>
                 <th className="p-2">TDS (ppm)</th>
                 <th className="p-2">Temperature (°C)</th>
+                <th className="p-2">Conductivity (μS/cm)</th>
               </tr>
             </thead>
             <tbody>
@@ -123,6 +129,7 @@ const App = () => {
                   <td className="p-2">{reading.turbidity.toFixed(2)}</td>
                   <td className="p-2">{reading.tds.toFixed(2)}</td>
                   <td className="p-2">{reading.temperature.toFixed(2)}</td>
+                  <td className="p-2">{reading.conductivity.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -142,6 +149,7 @@ const App = () => {
         turbidity: predictions.predictions.turbidity[i],
         tds: predictions.predictions.tds[i],
         temperature: predictions.predictions.temperature[i],
+        conductivity: predictions.predictions.conductivity[i],
         isPrediction: true
       }))
     ] : sensorData;
@@ -235,6 +243,32 @@ const App = () => {
                   <Tooltip />
                   <Legend />
                   <Line type="monotone" dataKey="turbidity" stroke="#ff7300" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Conductivity Chart */}
+            <div className="h-[300px]">
+              <h3 className="text-lg font-semibold mb-4">Conductivity Trends</h3>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={combinedData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="timestamp" 
+                    tick={{ fontSize: 12 }}
+                    angle={-45}
+                    textAnchor="end"
+                  />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="conductivity" 
+                    stroke="#9c27b0"
+                    strokeDasharray={(d) => d.isPrediction ? "5 5" : "0"}
+                    strokeWidth={(d) => d.isPrediction ? 2 : 3}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
