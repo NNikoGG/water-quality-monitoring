@@ -50,7 +50,7 @@ const App = () => {
     const fetchPredictions = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('https://your-render-app.onrender.com/predict');
+        const response = await fetch('https://your-render-app.onrender.com/predict'); // URL CHANGE
         const data = await response.json();
         setPredictions(data);
       } catch (error) {
