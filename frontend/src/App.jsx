@@ -211,7 +211,7 @@ const App = () => {
         <CardHeader>
           <CardTitle>Real-time Sensor Data</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-2 md:p-6">
           <DateTime latestData={latestData} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {latestData && (
@@ -335,7 +335,7 @@ const App = () => {
             </button>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-2 md:p-6">
           <div className="overflow-x-auto">
             <table className="min-w-full text-center border border-black/10 rounded-lg">
               <thead>
@@ -395,14 +395,14 @@ const App = () => {
         <CardHeader>
           <CardTitle>Data Visualizations</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-8">
+        <CardContent className="p-2 md:p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Column Headers */}
-            <h2 className="text-xl font-bold mb-6">Real-time Data</h2>
-            <h2 className="text-xl font-bold mb-6">Predicted Data</h2>
+            <h2 className="hidden md:block text-xl font-bold mb-6 md:col-span-1">Real-time Data</h2>
+            <h2 className="hidden md:block text-xl font-bold mb-6 md:col-span-1">Predicted Data</h2>
 
             {/* pH Charts */}
-            <div className="h-[300px]">
+            <div className="h-[250px] md:h-[300px]">
               <h3 className="text-lg font-semibold mb-4">pH Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={realData}>
@@ -431,7 +431,7 @@ const App = () => {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            <div className="h-[300px]">
+            <div className="h-[250px] md:h-[300px]">
               <h3 className="text-lg font-semibold mb-4">pH Predictions</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={predictedData}>
@@ -462,7 +462,7 @@ const App = () => {
             </div>
 
             {/* Temperature Charts */}
-            <div className="h-[300px]">
+            <div className="h-[250px] md:h-[300px]">
               <h3 className="text-lg font-semibold mb-4">Temperature Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={realData}>
@@ -491,7 +491,7 @@ const App = () => {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            <div className="h-[300px]">
+            <div className="h-[250px] md:h-[300px]">
               <h3 className="text-lg font-semibold mb-4">Temperature Predictions</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={predictedData}>
@@ -522,7 +522,7 @@ const App = () => {
             </div>
 
             {/* TDS Charts */}
-            <div className="h-[300px]">
+            <div className="h-[250px] md:h-[300px]">
               <h3 className="text-lg font-semibold mb-4">TDS Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={realData}>
@@ -551,7 +551,7 @@ const App = () => {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            <div className="h-[300px]">
+            <div className="h-[250px] md:h-[300px]">
               <h3 className="text-lg font-semibold mb-4">TDS Predictions</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={predictedData}>
@@ -582,7 +582,7 @@ const App = () => {
             </div>
 
             {/* Turbidity Charts */}
-            <div className="h-[300px]">
+            <div className="h-[250px] md:h-[300px]">
               <h3 className="text-lg font-semibold mb-4">Turbidity Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={realData}>
@@ -611,7 +611,7 @@ const App = () => {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            <div className="h-[300px]">
+            <div className="h-[250px] md:h-[300px]">
               <h3 className="text-lg font-semibold mb-4">Turbidity Predictions</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={predictedData}>
@@ -642,7 +642,7 @@ const App = () => {
             </div>
 
             {/* Conductivity Charts */}
-            <div className="h-[300px]">
+            <div className="h-[250px] md:h-[300px]">
               <h3 className="text-lg font-semibold mb-4">Conductivity Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={realData}>
@@ -671,7 +671,7 @@ const App = () => {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            <div className="h-[300px]">
+            <div className="h-[250px] md:h-[300px]">
               <h3 className="text-lg font-semibold mb-4">Conductivity Predictions</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={predictedData}>
@@ -707,11 +707,11 @@ const App = () => {
   };
 
   const Navbar = () => (
-    <nav className="bg-white/50 backdrop-blur-sm shadow-lg mb-8 border-black rounded-lg">
-      <div className="container mx-auto px-4">
-        <div className="flex space-x-4">
+    <nav className="bg-white/50 backdrop-blur-sm shadow-lg mb-8 border-black rounded-lg overflow-x-auto">
+      <div className="container mx-auto px-2 md:px-4">
+        <div className="flex space-x-2 md:space-x-4">
           <button
-            className={`px-4 py-3 text-sm font-medium ${
+            className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
               activeTab === 'realtime' 
                 ? 'text-blue-600 border-b-2 border-blue-600' 
                 : 'text-black-500 hover:text-blue-600'
@@ -721,7 +721,7 @@ const App = () => {
             Real-time Data
           </button>
           <button
-            className={`px-4 py-3 text-sm font-medium ${
+            className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
               activeTab === 'historical' 
                 ? 'text-blue-600 border-b-2 border-blue-600' 
                 : 'text-black-500 hover:text-blue-600'
@@ -731,7 +731,7 @@ const App = () => {
             Historical Data
           </button>
           <button
-            className={`px-4 py-3 text-sm font-medium ${
+            className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
               activeTab === 'visualizations' 
                 ? 'text-blue-600 border-b-2 border-blue-600' 
                 : 'text-black-500 hover:text-blue-600'
@@ -750,11 +750,11 @@ const App = () => {
       <div className="container mx-auto px-4">
         <div className="text-center">
           <h3 className="text-lg font-semibold mb-4">Created By</h3>
-          <p className="text-black-600 mb-4">
+          <p className="text-sm md:text-base text-black-600 mb-4">
             Nitish Gogoi, Abhijit Das, Arnall Saikia, Rajarshi Dutta
           </p>
           <h3 className="text-lg font-semibold mb-4">Under the Guidance of</h3>
-          <p className="text-black-600">
+          <p className="text-sm md:text-base text-black-600">
             Prof. Dinesh Shankar Pegu
           </p>
         </div>
@@ -774,7 +774,7 @@ const App = () => {
     }, []);
 
     return (
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Date</h3>
           <p className="text-2xl">
@@ -828,7 +828,7 @@ const App = () => {
       }}
     >
       <div className="container mx-auto p-4 backdrop-blur-sm bg-white/0">
-        <h1 className="text-6xl font-['Bebas_Neue'] mb-8 text-white tracking-wider font-bold">Water Quality Monitoring Dashboard</h1>
+        <h1 className="text-3xl md:text-6xl font-['Bebas_Neue'] mb-4 md:mb-8 text-white tracking-wider font-bold">Water Quality Monitoring Dashboard</h1>
         <Navbar />
         
         {activeTab === 'realtime' && (
