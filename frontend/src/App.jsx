@@ -466,7 +466,7 @@ const App = () => {
           </p>
           <h3 className="text-lg font-semibold mb-4">Under the Guidance of</h3>
           <p className="text-gray-600">
-            Prof D S Pegu, Prof Ankur Jyoti Sarmah
+            Prof. Dinesh Shankar Pegu
           </p>
         </div>
       </div>
