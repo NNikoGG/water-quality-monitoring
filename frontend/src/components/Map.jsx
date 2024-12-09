@@ -40,7 +40,7 @@ const Map = () => {
   }, []);
 
   return (
-    <Card className="mt-8">
+    <Card className="mt-8 bg-white/30 backdrop-blur-sm border border-black/20 rounded-lg">
       <CardHeader>
         <CardTitle>Location Tracker</CardTitle>
       </CardHeader>

@@ -207,7 +207,7 @@ const App = () => {
     };
 
     return (
-      <Card className="mb-8">
+      <Card className="mb-8 bg-white/30 backdrop-blur-sm border border-black/20 rounded-lg">
         <CardHeader>
           <CardTitle>Real-time Sensor Data</CardTitle>
         </CardHeader>
@@ -323,7 +323,7 @@ const App = () => {
     };
 
     return (
-      <Card className="mb-8">
+      <Card className="mb-8 bg-white/30 border border-black/20 rounded-lg backdrop-blur-sm">
         <CardHeader>
           <div className="flex flex-row justify-between items-center">
             <CardTitle>Historical Data</CardTitle>
@@ -339,7 +339,7 @@ const App = () => {
           <div className="overflow-x-auto">
             <table className="min-w-full text-center">
               <thead>
-                <tr className="bg-gray-100">
+                <tr className="bg-white/30 backdrop-blur-sm">
                   <th className="p-2">Timestamp</th>
                   <th className="p-2">pH</th>
                   <th className="p-2">Turbidity (NTU)</th>
@@ -350,7 +350,7 @@ const App = () => {
               </thead>
               <tbody>
                 {sensorData.map((reading) => (
-                  <tr key={reading.id} className="border-b">
+                  <tr key={reading.id} className="border-b border-black/20">
                     <td className="p-2">{reading.timestamp}</td>
                     <td className="p-2">{reading.ph.toFixed(2)}</td>
                     <td className="p-2">{reading.turbidity.toFixed(2)}</td>
@@ -391,7 +391,7 @@ const App = () => {
     })) : [];
 
     return (
-      <Card>
+      <Card className="bg-white/30 backdrop-blur-sm border border-black/20 rounded-lg">
         <CardHeader>
           <CardTitle>Data Visualizations</CardTitle>
         </CardHeader>
@@ -647,14 +647,14 @@ const App = () => {
   };
 
   const Navbar = () => (
-    <nav className="bg-white shadow-lg mb-8">
+    <nav className="bg-white/30 backdrop-blur-sm shadow-lg mb-8 border-black rounded-lg">
       <div className="container mx-auto px-4">
         <div className="flex space-x-4">
           <button
             className={`px-4 py-3 text-sm font-medium ${
               activeTab === 'realtime' 
                 ? 'text-blue-600 border-b-2 border-blue-600' 
-                : 'text-gray-500 hover:text-blue-600'
+                : 'text-black-500 hover:text-blue-600'
             }`}
             onClick={() => setActiveTab('realtime')}
           >
@@ -664,7 +664,7 @@ const App = () => {
             className={`px-4 py-3 text-sm font-medium ${
               activeTab === 'historical' 
                 ? 'text-blue-600 border-b-2 border-blue-600' 
-                : 'text-gray-500 hover:text-blue-600'
+                : 'text-black-500 hover:text-blue-600'
             }`}
             onClick={() => setActiveTab('historical')}
           >
@@ -674,7 +674,7 @@ const App = () => {
             className={`px-4 py-3 text-sm font-medium ${
               activeTab === 'visualizations' 
                 ? 'text-blue-600 border-b-2 border-blue-600' 
-                : 'text-gray-500 hover:text-blue-600'
+                : 'text-black-500 hover:text-blue-600'
             }`}
             onClick={() => setActiveTab('visualizations')}
           >
@@ -686,15 +686,15 @@ const App = () => {
   );
 
   const Footer = () => (
-    <footer className="bg-white shadow-lg mt-8 py-8">
+    <footer className="bg-white/30 backdrop-blur-sm shadow-lg mt-8 py-8 border-black rounded-lg">
       <div className="container mx-auto px-4">
         <div className="text-center">
           <h3 className="text-lg font-semibold mb-4">Created By</h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-black-600 mb-4">
             Nitish Gogoi, Abhijit Das, Arnall Saikia, Rajarshi Dutta
           </p>
           <h3 className="text-lg font-semibold mb-4">Under the Guidance of</h3>
-          <p className="text-gray-600">
+          <p className="text-black-600">
             Prof. Dinesh Shankar Pegu
           </p>
         </div>
@@ -715,7 +715,7 @@ const App = () => {
 
     return (
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="p-4 bg-white rounded-lg shadow">
+        <div className="p-4 bg-white/30 backdrop-blur-sm rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Date</h3>
           <p className="text-2xl">
             {currentDateTime.toLocaleDateString('en-US', {
@@ -726,7 +726,7 @@ const App = () => {
             })}
           </p>
         </div>
-        <div className="p-4 bg-white rounded-lg shadow">
+        <div className="p-4 bg-white/30 backdrop-blur-sm rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Time</h3>
           <p className="text-2xl">
             {currentDateTime.toLocaleTimeString('en-US', {
@@ -736,7 +736,7 @@ const App = () => {
             })}
           </p>
         </div>
-        <div className="p-4 bg-white rounded-lg shadow">
+        <div className="p-4 bg-white/30 backdrop-blur-sm rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Last Updated</h3>
           <p className="text-2xl">
             {latestData ? (
@@ -767,7 +767,7 @@ const App = () => {
         backgroundImage: 'url("/lake.jpg")',
       }}
     >
-      <div className="container mx-auto p-4 backdrop-blur-sm bg-white/30">
+      <div className="container mx-auto p-4 backdrop-blur-sm bg-white/20">
         <h1 className="text-3xl font-bold mb-8 text-white">Water Quality Monitoring Dashboard</h1>
         <Navbar />
         
