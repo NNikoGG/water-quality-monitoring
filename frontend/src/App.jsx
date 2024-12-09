@@ -17,24 +17,54 @@ const firebaseConfig = {
 
 const Dial = ({ value, min, max, optimal, unit, title, getStatus }) => {
   const percentage = ((value - min) / (max - min)) * 100;
-  const rotation = (percentage * 2.2) - 110; // Extended range for the dial (-110 to 110 degrees)
+  const rotation = (percentage * 2.2) - 110;
   const status = getStatus(value);
 
   // Calculate color segments based on the parameter ranges
-  const getSegmentColors = () => {
+  const getSegmentGradient = () => {
     switch (title) {
       case "pH Level":
-        return "border-l-purple-500 border-r-red-500 border-t-green-500";
+        return `conic-gradient(
+          from 180deg,
+          rgb(239, 68, 68) 20%, /* Red */
+          rgb(34, 197, 94) 55%, /* Green */
+          rgb(168, 85, 247) 80% /* Purple */
+          
+        )`;
       case "Turbidity":
-        return "border-l-red-500 border-r-green-500 border-t-blue-500";
+        return `conic-gradient(
+          from 180deg,
+          rgb(34, 197, 94) 20%, /* Green */
+          rgb(59, 130, 246) 40%, /* Blue */
+          rgb(239, 68, 68) 50% /* Red */
+        )`;
       case "TDS":
-        return "border-l-red-500 border-r-green-500 border-t-blue-500";
+        return `conic-gradient(
+          from 180deg,
+          rgb(34, 197, 94) 20%, /* Green */
+          rgb(59, 130, 246) 55%, /* Blue */
+          rgb(239, 68, 68) 80% /* Red */
+          )`;
       case "Temperature":
-        return "border-l-red-500 border-r-blue-500 border-t-green-500";
+        return `conic-gradient(
+          from 180deg,
+          rgb(59, 130, 246) 20%, /* Blue */
+          rgb(255, 255, 103) 55%, /* Yellow */
+          rgb(239, 68, 68) 80% /* Red */
+        )`;
       case "Conductivity":
-        return "border-l-red-500 border-r-blue-500 border-t-green-500";
+        return `conic-gradient(
+          from 180deg,
+          rgb(59, 130, 246) 20%, /* Blue */
+          rgb(34, 197, 94) 55%, /* Green */
+          rgb(239, 68, 68) 80% /* Red */
+        )`;
       default:
-        return "border-l-gray-500 border-r-gray-500 border-t-gray-500";
+        return `conic-gradient(
+          from 180deg,
+          gray 0%,
+          gray 100%
+        )`;
     }
   };
 
@@ -45,20 +75,24 @@ const Dial = ({ value, min, max, optimal, unit, title, getStatus }) => {
       {/* Dial Container */}
       <div className="relative w-48 h-32 mb-4">
         {/* Dial Ring */}
-        <div className={`
-          absolute 
-          w-48 
-          h-48 
-          border-[16px] 
-          rounded-full 
-          top-0
-          ${getSegmentColors()}
-        `}
-        style={{
-          clipPath: 'polygon(0 0.1%, 100% 0.1%, 100% 70%, 0 70%)',
-          transform: 'rotate(0deg)',
-        }}
-        ></div>
+        <div
+          className="absolute w-48 h-48 rounded-full top-0 overflow-hidden"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            WebkitMask: 'radial-gradient(transparent 55%, black 55%)',
+            mask: 'radial-gradient(transparent 55%, black 55%)',
+            clipPath: 'polygon(0 0.1%, 100% 0.1%, 100% 70%, 0 70%)',
+            transform: 'rotate(0deg)',
+          }}
+        >
+          <div
+            className="w-full h-full"
+            style={{
+              background: getSegmentGradient(),
+            }}
+          />
+        </div>
 
         {/* Pointer */}
         <div 
@@ -136,10 +170,10 @@ const App = () => {
   const RealtimeData = () => {
     // Status functions
     const getPhStatus = (ph) => {
-      if (ph < 6.5) return { status: 'Acidic', color: 'text-red-600' };
-      if (ph < 7.0) return { status: 'Slightly Acidic', color: 'text-orange-500' };
-      if (ph === 7.0) return { status: 'Neutral', color: 'text-green-600' };
-      if (ph < 7.5) return { status: 'Slightly Basic', color: 'text-blue-500' };
+      if (ph < 5) return { status: 'Acidic', color: 'text-red-600' };
+      if (ph < 6.5 && ph > 5) return { status: 'Slightly Acidic', color: 'text-orange-500' };
+      if (ph > 6.5 && ph < 7.5) return { status: 'Neutral', color: 'text-green-600' };
+      if (ph < 9.0 && ph > 7.5) return { status: 'Slightly Basic', color: 'text-blue-500' };
       return { status: 'Basic', color: 'text-purple-600' };
     };
 
@@ -159,8 +193,9 @@ const App = () => {
 
     const getTemperatureStatus = (temp) => {
       if (temp < 20) return { status: 'Cold', color: 'text-blue-600' };
-      if (temp < 25) return { status: 'Cool', color: 'text-green-600' };
-      if (temp < 30) return { status: 'Warm', color: 'text-orange-500' };
+      if (temp < 25) return { status: 'Cool', color: 'text-blue-600' };
+      if (temp > 25 && temp < 30) return { status: 'Normal', color: 'text-green-600' };
+      if (temp > 30 && temp < 35) return { status: 'Warm', color: 'text-orange-500' };
       return { status: 'Hot', color: 'text-red-600' };
     };
 
