@@ -15,6 +15,73 @@ const firebaseConfig = {
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
 
+const Dial = ({ value, min, max, optimal, unit, title, getStatus }) => {
+  const percentage = ((value - min) / (max - min)) * 100;
+  const rotation = (percentage * 2.2) - 110; // Extended range for the dial (-110 to 110 degrees)
+  const status = getStatus(value);
+
+  // Calculate color segments based on the parameter ranges
+  const getSegmentColors = () => {
+    switch (title) {
+      case "pH Level":
+        return "border-l-purple-500 border-r-red-500 border-t-green-500";
+      case "Turbidity":
+        return "border-l-red-500 border-r-green-500 border-t-blue-500";
+      case "TDS":
+        return "border-l-red-500 border-r-green-500 border-t-blue-500";
+      case "Temperature":
+        return "border-l-red-500 border-r-blue-500 border-t-green-500";
+      case "Conductivity":
+        return "border-l-red-500 border-r-blue-500 border-t-green-500";
+      default:
+        return "border-l-gray-500 border-r-gray-500 border-t-gray-500";
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center p-4">
+      <h3 className="text-xl font-semibold mb-4">{title}</h3>
+      
+      {/* Dial Container */}
+      <div className="relative w-48 h-32 mb-4">
+        {/* Dial Ring */}
+        <div className={`
+          absolute 
+          w-48 
+          h-48 
+          border-[16px] 
+          rounded-full 
+          top-0
+          ${getSegmentColors()}
+        `}
+        style={{
+          clipPath: 'polygon(0 0.1%, 100% 0.1%, 100% 70%, 0 70%)',
+          transform: 'rotate(0deg)',
+        }}
+        ></div>
+
+        {/* Pointer */}
+        <div 
+          className="absolute bottom-0 left-1/2 w-1 h-24 bg-black origin-bottom bottom-8"
+          style={{ 
+            transform: `translateX(-50%) rotate(${rotation}deg)`,
+          }}
+        />
+      </div>
+
+      {/* Value Display */}
+      <div className="text-center">
+        <p className="text-2xl font-bold mb-2">
+          {value.toFixed(2)} {unit}
+        </p>
+        <p className={`text-lg ${status.color}`}>
+          {status.status}
+        </p>
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [sensorData, setSensorData] = useState([]);
   const [latestData, setLatestData] = useState(null);
@@ -66,41 +133,105 @@ const App = () => {
     }
   }, [sensorData]);
 
-  const RealtimeData = () => (
-    <Card className="mb-8">
-      <CardHeader>
-        <CardTitle>Real-time Sensor Data</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {latestData && (
-            <>
-              <div className="p-4 bg-blue-100 rounded-lg">
-                <h3 className="text-lg font-semibold">pH Level</h3>
-                <p className="text-2xl">{latestData.ph.toFixed(2)}</p>
-              </div>
-              <div className="p-4 bg-green-100 rounded-lg">
-                <h3 className="text-lg font-semibold">Turbidity</h3>
-                <p className="text-2xl">{latestData.turbidity.toFixed(2)} NTU</p>
-              </div>
-              <div className="p-4 bg-yellow-100 rounded-lg">
-                <h3 className="text-lg font-semibold">TDS</h3>
-                <p className="text-2xl">{latestData.tds.toFixed(2)} ppm</p>
-              </div>
-              <div className="p-4 bg-red-100 rounded-lg">
-                <h3 className="text-lg font-semibold">Temperature</h3>
-                <p className="text-2xl">{latestData.temperature.toFixed(2)} °C</p>
-              </div>
-              <div className="p-4 bg-purple-100 rounded-lg">
-                <h3 className="text-lg font-semibold">Conductivity</h3>
-                <p className="text-2xl">{latestData.conductivity.toFixed(2)} μS/cm</p>
-              </div>
-            </>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
+  const RealtimeData = () => {
+    // Status functions
+    const getPhStatus = (ph) => {
+      if (ph < 6.5) return { status: 'Acidic', color: 'text-red-600' };
+      if (ph < 7.0) return { status: 'Slightly Acidic', color: 'text-orange-500' };
+      if (ph === 7.0) return { status: 'Neutral', color: 'text-green-600' };
+      if (ph < 7.5) return { status: 'Slightly Basic', color: 'text-blue-500' };
+      return { status: 'Basic', color: 'text-purple-600' };
+    };
+
+    const getTurbidityStatus = (turbidity) => {
+      if (turbidity < 1) return { status: 'Excellent', color: 'text-green-600' };
+      if (turbidity < 5) return { status: 'Good', color: 'text-blue-500' };
+      if (turbidity < 10) return { status: 'Fair', color: 'text-orange-500' };
+      return { status: 'Poor', color: 'text-red-600' };
+    };
+
+    const getTdsStatus = (tds) => {
+      if (tds < 300) return { status: 'Excellent', color: 'text-green-600' };
+      if (tds < 600) return { status: 'Good', color: 'text-blue-500' };
+      if (tds < 900) return { status: 'Fair', color: 'text-orange-500' };
+      return { status: 'Poor', color: 'text-red-600' };
+    };
+
+    const getTemperatureStatus = (temp) => {
+      if (temp < 20) return { status: 'Cold', color: 'text-blue-600' };
+      if (temp < 25) return { status: 'Cool', color: 'text-green-600' };
+      if (temp < 30) return { status: 'Warm', color: 'text-orange-500' };
+      return { status: 'Hot', color: 'text-red-600' };
+    };
+
+    const getConductivityStatus = (conductivity) => {
+      if (conductivity < 200) return { status: 'Low', color: 'text-blue-500' };
+      if (conductivity < 800) return { status: 'Normal', color: 'text-green-600' };
+      return { status: 'High', color: 'text-red-600' };
+    };
+
+    return (
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Real-time Sensor Data</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DateTime />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            {latestData && (
+              <>
+                <Dial
+                  value={latestData.ph}
+                  min={0}
+                  max={14}
+                  optimal={7}
+                  unit="pH"
+                  title="pH Level"
+                  getStatus={getPhStatus}
+                />
+                <Dial
+                  value={latestData.turbidity}
+                  min={0}
+                  max={20}
+                  optimal={2.5}
+                  unit="NTU"
+                  title="Turbidity"
+                  getStatus={getTurbidityStatus}
+                />
+                <Dial
+                  value={latestData.tds}
+                  min={0}
+                  max={1200}
+                  optimal={450}
+                  unit="ppm"
+                  title="TDS"
+                  getStatus={getTdsStatus}
+                />
+                <Dial
+                  value={latestData.temperature}
+                  min={0}
+                  max={50}
+                  optimal={25}
+                  unit="°C"
+                  title="Temperature"
+                  getStatus={getTemperatureStatus}
+                />
+                <Dial
+                  value={latestData.conductivity}
+                  min={0}
+                  max={1500}
+                  optimal={500}
+                  unit="μS/cm"
+                  title="Conductivity"
+                  getStatus={getConductivityStatus}
+                />
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   const DataTable = () => (
     <Card className="mb-8">
@@ -472,6 +603,44 @@ const App = () => {
       </div>
     </footer>
   );
+
+  const DateTime = () => {
+    const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
+    useEffect(() => {
+      const timer = setInterval(() => {
+        setCurrentDateTime(new Date());
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }, []);
+
+    return (
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="p-4 bg-white rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-2">Date</h3>
+          <p className="text-2xl">
+            {currentDateTime.toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </p>
+        </div>
+        <div className="p-4 bg-white rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-2">Time</h3>
+          <p className="text-2xl">
+            {currentDateTime.toLocaleTimeString('en-US', {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit'
+            })}
+          </p>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
