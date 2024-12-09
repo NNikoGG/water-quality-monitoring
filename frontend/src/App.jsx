@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue, query, orderByChild, limitToLast } from 'firebase/database';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardHeader, CardTitle, CardContent } from "./components/ui/card";
+import Map from './components/Map';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -96,7 +97,7 @@ const Dial = ({ value, min, max, optimal, unit, title, getStatus }) => {
 
         {/* Pointer */}
         <div 
-          className="absolute bottom-0 left-1/2 w-1 h-24 bg-black origin-bottom bottom-8"
+          className="absolute bottom-0 left-1/2 w-1.5 h-24 bg-black origin-bottom bottom-8"
           style={{ 
             transform: `translateX(-50%) rotate(${rotation}deg)`,
           }}
@@ -693,7 +694,12 @@ const App = () => {
         <h1 className="text-3xl font-bold mb-8">Water Quality Monitoring Dashboard</h1>
         <Navbar />
         
-        {activeTab === 'realtime' && <RealtimeData />}
+        {activeTab === 'realtime' && (
+          <>
+            <RealtimeData />
+            <Map />
+          </>
+        )}
         {activeTab === 'historical' && <DataTable />}
         {activeTab === 'visualizations' && <DataVisualizations />}
         
