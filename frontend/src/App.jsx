@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, onValue, query, orderByChild, limitToLast } from 'firebase/database';
+import { getDatabase, ref, onValue, query, orderByChild, limitToLast, get } from 'firebase/database';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardHeader, CardTitle, CardContent } from "./components/ui/card";
 import Map from './components/Map';
@@ -139,7 +139,7 @@ const App = () => {
       });
       
       // Sort data by timestamp
-      data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+      data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       
       setSensorData(data);
       setLatestData(data[data.length - 1]);
@@ -269,41 +269,103 @@ const App = () => {
     );
   };
 
-  const DataTable = () => (
-    <Card className="mb-8">
-      <CardHeader>
-        <CardTitle>Historical Data</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="p-2">Timestamp</th>
-                <th className="p-2">pH</th>
-                <th className="p-2">Turbidity (NTU)</th>
-                <th className="p-2">TDS (ppm)</th>
-                <th className="p-2">Temperature (°C)</th>
-                <th className="p-2">Conductivity (μS/cm)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sensorData.map((reading) => (
-                <tr key={reading.id} className="border-b">
-                  <td className="p-2">{reading.timestamp}</td>
-                  <td className="p-2">{reading.ph.toFixed(2)}</td>
-                  <td className="p-2">{reading.turbidity.toFixed(2)}</td>
-                  <td className="p-2">{reading.tds.toFixed(2)}</td>
-                  <td className="p-2">{reading.temperature.toFixed(2)}</td>
-                  <td className="p-2">{reading.conductivity.toFixed(2)}</td>
+  const DataTable = () => {
+    const downloadData = async () => {
+      try {
+        // Reference to the entire sensor_data node
+        const sensorRef = ref(database, 'sensor_data');
+        
+        // Get all data once
+        const snapshot = await get(sensorRef);
+        const allData = [];
+        
+        snapshot.forEach((childSnapshot) => {
+          allData.push({
+            id: childSnapshot.key,
+            ...childSnapshot.val()
+          });
+        });
+
+        // Sort data by timestamp (newest to oldest)
+        allData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        // Convert to CSV format
+        const headers = ['Timestamp', 'pH', 'Turbidity (NTU)', 'TDS (ppm)', 'Temperature (°C)', 'Conductivity (μS/cm)'];
+        const csvData = allData.map(reading => [
+          reading.timestamp,
+          reading.ph.toFixed(2),
+          reading.turbidity.toFixed(2),
+          reading.tds.toFixed(2),
+          reading.temperature.toFixed(2),
+          reading.conductivity.toFixed(2)
+        ]);
+        
+        // Create CSV content
+        const csvContent = [
+          headers.join(','),
+          ...csvData.map(row => row.join(','))
+        ].join('\n');
+        
+        // Create and trigger download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'complete_water_quality_data.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Error downloading data:', error);
+        alert('Error downloading data. Please try again.');
+      }
+    };
+
+    return (
+      <Card className="mb-8">
+        <CardHeader>
+          <div className="flex flex-row justify-between items-center">
+            <CardTitle>Historical Data</CardTitle>
+            <button
+              onClick={downloadData}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Download Data
+            </button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-center">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="p-2">Timestamp</th>
+                  <th className="p-2">pH</th>
+                  <th className="p-2">Turbidity (NTU)</th>
+                  <th className="p-2">TDS (ppm)</th>
+                  <th className="p-2">Temperature (°C)</th>
+                  <th className="p-2">Conductivity (μS/cm)</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
-  );
+              </thead>
+              <tbody>
+                {sensorData.map((reading) => (
+                  <tr key={reading.id} className="border-b">
+                    <td className="p-2">{reading.timestamp}</td>
+                    <td className="p-2">{reading.ph.toFixed(2)}</td>
+                    <td className="p-2">{reading.turbidity.toFixed(2)}</td>
+                    <td className="p-2">{reading.tds.toFixed(2)}</td>
+                    <td className="p-2">{reading.temperature.toFixed(2)}</td>
+                    <td className="p-2">{reading.conductivity.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   const DataVisualizations = () => {
     // Clean data before combining
@@ -677,11 +739,21 @@ const App = () => {
         <div className="p-4 bg-white rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Last Updated</h3>
           <p className="text-2xl">
-            {latestData ? new Date(latestData.timestamp).toLocaleTimeString('en-US', {
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit'
-            }) : 'No data'}
+            {latestData ? (
+              <>
+                {new Date(latestData.timestamp).toLocaleTimeString('en-US', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit'
+                })}
+                {', '}
+                {new Date(latestData.timestamp).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
+                })}
+              </>
+            ) : 'No data'}
           </p>
         </div>
       </div>
