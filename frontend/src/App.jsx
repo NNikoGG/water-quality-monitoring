@@ -142,7 +142,7 @@ const App = () => {
       data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       
       setSensorData(data);
-      setLatestData(data[data.length - 1]);
+      setLatestData(data[0]);
     });
 
     return () => unsubscribe();
@@ -761,9 +761,14 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-8">Water Quality Monitoring Dashboard</h1>
+    <div 
+      className="min-h-screen bg-cover bg-center bg-fixed"
+      style={{
+        backgroundImage: 'url("/lake.jpg")',
+      }}
+    >
+      <div className="container mx-auto p-4 backdrop-blur-sm bg-white/30">
+        <h1 className="text-3xl font-bold mb-8 text-white">Water Quality Monitoring Dashboard</h1>
         <Navbar />
         
         {activeTab === 'realtime' && (
