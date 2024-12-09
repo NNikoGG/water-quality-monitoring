@@ -207,7 +207,7 @@ const App = () => {
     };
 
     return (
-      <Card className="mb-8 bg-white/30 backdrop-blur-sm border border-black/20 rounded-lg">
+      <Card className="mb-8 bg-white/50 backdrop-blur-sm border border-black/20 rounded-lg">
         <CardHeader>
           <CardTitle>Real-time Sensor Data</CardTitle>
         </CardHeader>
@@ -323,7 +323,7 @@ const App = () => {
     };
 
     return (
-      <Card className="mb-8 bg-white/30 border border-black/20 rounded-lg backdrop-blur-sm">
+      <Card className="mb-8 bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
         <CardHeader>
           <div className="flex flex-row justify-between items-center">
             <CardTitle>Historical Data</CardTitle>
@@ -337,7 +337,7 @@ const App = () => {
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <table className="min-w-full text-center">
+            <table className="min-w-full text-center border border-black/10 rounded-lg">
               <thead>
                 <tr className="bg-white/30 backdrop-blur-sm">
                   <th className="p-2">Timestamp</th>
@@ -391,7 +391,7 @@ const App = () => {
     })) : [];
 
     return (
-      <Card className="bg-white/30 backdrop-blur-sm border border-black/20 rounded-lg">
+      <Card className="bg-white/50 backdrop-blur-sm border border-black/20 rounded-lg">
         <CardHeader>
           <CardTitle>Data Visualizations</CardTitle>
         </CardHeader>
@@ -406,15 +406,21 @@ const App = () => {
               <h3 className="text-lg font-semibold mb-4">pH Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={realData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
                   <XAxis 
                     dataKey="timestamp" 
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: "black" }}
                     angle={-45}
                     textAnchor="end"
+                    stroke="black"
                   />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis 
+                    tick={{ fill: "black" }}
+                    stroke="black"
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="ph" 
@@ -429,15 +435,21 @@ const App = () => {
               <h3 className="text-lg font-semibold mb-4">pH Predictions</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={predictedData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
                   <XAxis 
                     dataKey="timestamp" 
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: "black" }}
                     angle={-45}
                     textAnchor="end"
+                    stroke="black"
                   />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis 
+                    tick={{ fill: "black" }}
+                    stroke="black"
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="ph" 
@@ -454,15 +466,21 @@ const App = () => {
               <h3 className="text-lg font-semibold mb-4">Temperature Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={realData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
                   <XAxis 
                     dataKey="timestamp" 
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: "black" }}
                     angle={-45}
                     textAnchor="end"
+                    stroke="black"
                   />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis 
+                    tick={{ fill: "black" }}
+                    stroke="black"
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="temperature" 
@@ -477,15 +495,21 @@ const App = () => {
               <h3 className="text-lg font-semibold mb-4">Temperature Predictions</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={predictedData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
                   <XAxis 
                     dataKey="timestamp" 
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: "black" }}
                     angle={-45}
                     textAnchor="end"
+                    stroke="black"
                   />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis 
+                    tick={{ fill: "black" }}
+                    stroke="black"
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="temperature" 
@@ -502,15 +526,21 @@ const App = () => {
               <h3 className="text-lg font-semibold mb-4">TDS Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={realData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
                   <XAxis 
                     dataKey="timestamp" 
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: "black" }}
                     angle={-45}
                     textAnchor="end"
+                    stroke="black"
                   />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis 
+                    tick={{ fill: "black" }}
+                    stroke="black"
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="tds" 
@@ -525,15 +555,21 @@ const App = () => {
               <h3 className="text-lg font-semibold mb-4">TDS Predictions</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={predictedData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
                   <XAxis 
                     dataKey="timestamp" 
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: "black" }}
                     angle={-45}
                     textAnchor="end"
+                    stroke="black"
                   />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis 
+                    tick={{ fill: "black" }}
+                    stroke="black"
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="tds" 
@@ -550,15 +586,21 @@ const App = () => {
               <h3 className="text-lg font-semibold mb-4">Turbidity Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={realData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
                   <XAxis 
                     dataKey="timestamp" 
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: "black" }}
                     angle={-45}
                     textAnchor="end"
+                    stroke="black"
                   />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis 
+                    tick={{ fill: "black" }}
+                    stroke="black"
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="turbidity" 
@@ -573,15 +615,21 @@ const App = () => {
               <h3 className="text-lg font-semibold mb-4">Turbidity Predictions</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={predictedData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
                   <XAxis 
                     dataKey="timestamp" 
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: "black" }}
                     angle={-45}
                     textAnchor="end"
+                    stroke="black"
                   />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis 
+                    tick={{ fill: "black" }}
+                    stroke="black"
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="turbidity" 
@@ -598,15 +646,21 @@ const App = () => {
               <h3 className="text-lg font-semibold mb-4">Conductivity Trends</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={realData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
                   <XAxis 
                     dataKey="timestamp" 
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: "black" }}
                     angle={-45}
                     textAnchor="end"
+                    stroke="black"
                   />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis 
+                    tick={{ fill: "black" }}
+                    stroke="black"
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="conductivity" 
@@ -621,15 +675,21 @@ const App = () => {
               <h3 className="text-lg font-semibold mb-4">Conductivity Predictions</h3>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={predictedData}>
-                  <CartesianGrid strokeDasharray="3 3" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
                   <XAxis 
                     dataKey="timestamp" 
-                    tick={{ fontSize: 12 }}
+                    tick={{ fontSize: 12, fill: "black" }}
                     angle={-45}
                     textAnchor="end"
+                    stroke="black"
                   />
-                  <YAxis />
-                  <Tooltip />
+                  <YAxis 
+                    tick={{ fill: "black" }}
+                    stroke="black"
+                  />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="conductivity" 
@@ -647,7 +707,7 @@ const App = () => {
   };
 
   const Navbar = () => (
-    <nav className="bg-white/30 backdrop-blur-sm shadow-lg mb-8 border-black rounded-lg">
+    <nav className="bg-white/50 backdrop-blur-sm shadow-lg mb-8 border-black rounded-lg">
       <div className="container mx-auto px-4">
         <div className="flex space-x-4">
           <button
@@ -686,7 +746,7 @@ const App = () => {
   );
 
   const Footer = () => (
-    <footer className="bg-white/30 backdrop-blur-sm shadow-lg mt-8 py-8 border-black rounded-lg">
+    <footer className="bg-white/50 backdrop-blur-sm shadow-lg mt-8 py-8 border-black rounded-lg">
       <div className="container mx-auto px-4">
         <div className="text-center">
           <h3 className="text-lg font-semibold mb-4">Created By</h3>
@@ -715,7 +775,7 @@ const App = () => {
 
     return (
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="p-4 bg-white/30 backdrop-blur-sm rounded-lg shadow">
+        <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Date</h3>
           <p className="text-2xl">
             {currentDateTime.toLocaleDateString('en-US', {
@@ -726,7 +786,7 @@ const App = () => {
             })}
           </p>
         </div>
-        <div className="p-4 bg-white/30 backdrop-blur-sm rounded-lg shadow">
+        <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Time</h3>
           <p className="text-2xl">
             {currentDateTime.toLocaleTimeString('en-US', {
@@ -736,7 +796,7 @@ const App = () => {
             })}
           </p>
         </div>
-        <div className="p-4 bg-white/30 backdrop-blur-sm rounded-lg shadow">
+        <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Last Updated</h3>
           <p className="text-2xl">
             {latestData ? (
@@ -767,8 +827,8 @@ const App = () => {
         backgroundImage: 'url("/lake.jpg")',
       }}
     >
-      <div className="container mx-auto p-4 backdrop-blur-sm bg-white/20">
-        <h1 className="text-3xl font-bold mb-8 text-white">Water Quality Monitoring Dashboard</h1>
+      <div className="container mx-auto p-4 backdrop-blur-sm bg-white/0">
+        <h1 className="text-6xl font-['Bebas_Neue'] mb-8 text-white tracking-wider font-bold">Water Quality Monitoring Dashboard</h1>
         <Navbar />
         
         {activeTab === 'realtime' && (
