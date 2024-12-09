@@ -380,7 +380,7 @@ const App = () => {
     } : null;
 
     // Separate real and predicted data
-    const realData = sensorData;
+    const realData = [...sensorData].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
     const predictedData = cleanPredictions ? cleanPredictions.timestamps.map((timestamp, i) => ({
       timestamp,
       ph: cleanPredictions.predictions.ph[i],
@@ -388,7 +388,7 @@ const App = () => {
       tds: cleanPredictions.predictions.tds[i],
       temperature: cleanPredictions.predictions.temperature[i],
       conductivity: cleanPredictions.predictions.conductivity[i]
-    })) : [];
+    })).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)) : [];
 
     return (
       <Card className="bg-white/50 backdrop-blur-sm border border-black/20 rounded-lg">
@@ -424,7 +424,7 @@ const App = () => {
                   <Line 
                     type="monotone" 
                     dataKey="ph" 
-                    stroke="#8884d8"
+                    stroke="#4338ca"
                     strokeWidth={3}
                     connectNulls
                   />
@@ -484,7 +484,7 @@ const App = () => {
                   <Line 
                     type="monotone" 
                     dataKey="temperature" 
-                    stroke="#82ca9d"
+                    stroke="#15803d"
                     strokeWidth={3}
                     connectNulls
                   />
