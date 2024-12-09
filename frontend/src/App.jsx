@@ -211,7 +211,7 @@ const App = () => {
           <CardTitle>Real-time Sensor Data</CardTitle>
         </CardHeader>
         <CardContent>
-          <DateTime />
+          <DateTime latestData={latestData} />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {latestData && (
               <>
@@ -651,7 +651,7 @@ const App = () => {
     }, []);
 
     return (
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="p-4 bg-white rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Date</h3>
           <p className="text-2xl">
@@ -671,6 +671,16 @@ const App = () => {
               minute: '2-digit',
               second: '2-digit'
             })}
+          </p>
+        </div>
+        <div className="p-4 bg-white rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-2">Last Updated</h3>
+          <p className="text-2xl">
+            {latestData ? new Date(latestData.timestamp).toLocaleTimeString('en-US', {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit'
+            }) : 'No data'}
           </p>
         </div>
       </div>
