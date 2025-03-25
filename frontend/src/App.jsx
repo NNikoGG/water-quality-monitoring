@@ -4,6 +4,7 @@ import { getDatabase, ref, onValue, query, orderByChild, limitToLast, get } from
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardHeader, CardTitle, CardContent } from "./components/ui/card";
 import Map from './components/Map';
+import CorrosionRiskAssessment from './components/CorrosionRiskAssessment';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -706,45 +707,6 @@ const App = () => {
     );
   };
 
-  const Navbar = () => (
-    <nav className="bg-white/50 backdrop-blur-sm shadow-lg mb-8 border-black rounded-lg overflow-x-auto">
-      <div className="container mx-auto px-2 md:px-4">
-        <div className="flex space-x-2 md:space-x-4">
-          <button
-            className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
-              activeTab === 'realtime' 
-                ? 'text-blue-600 border-b-2 border-blue-600' 
-                : 'text-black-500 hover:text-blue-600'
-            }`}
-            onClick={() => setActiveTab('realtime')}
-          >
-            Real-time Data
-          </button>
-          <button
-            className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
-              activeTab === 'historical' 
-                ? 'text-blue-600 border-b-2 border-blue-600' 
-                : 'text-black-500 hover:text-blue-600'
-            }`}
-            onClick={() => setActiveTab('historical')}
-          >
-            Historical Data
-          </button>
-          <button
-            className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
-              activeTab === 'visualizations' 
-                ? 'text-blue-600 border-b-2 border-blue-600' 
-                : 'text-black-500 hover:text-blue-600'
-            }`}
-            onClick={() => setActiveTab('visualizations')}
-          >
-            Data Visualizations
-          </button>
-        </div>
-      </div>
-    </nav>
-  );
-
   const Footer = () => (
     <footer className="bg-white/50 backdrop-blur-sm shadow-lg mt-8 py-8 border-black rounded-lg">
       <div className="container mx-auto px-4">
@@ -829,7 +791,53 @@ const App = () => {
     >
       <div className="container mx-auto p-4 backdrop-blur-sm bg-white/0">
         <h1 className="text-3xl md:text-6xl font-['Bebas_Neue'] mb-4 md:mb-8 text-white tracking-wider font-bold">Water Quality Monitoring Dashboard</h1>
-        <Navbar />
+        
+        <nav className="bg-white/50 backdrop-blur-sm shadow-lg mb-8 border-black rounded-lg overflow-x-auto">
+          <div className="container mx-auto px-2 md:px-4">
+            <div className="flex space-x-2 md:space-x-4">
+              <button
+                className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
+                  activeTab === 'realtime' 
+                    ? 'text-blue-600 border-b-2 border-blue-600' 
+                    : 'text-black-500 hover:text-blue-600'
+                }`}
+                onClick={() => setActiveTab('realtime')}
+              >
+                Real-time Data
+              </button>
+              <button
+                className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
+                  activeTab === 'table' 
+                    ? 'text-blue-600 border-b-2 border-blue-600' 
+                    : 'text-black-500 hover:text-blue-600'
+                }`}
+                onClick={() => setActiveTab('table')}
+              >
+                Data Table
+              </button>
+              <button
+                className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
+                  activeTab === 'visualizations' 
+                    ? 'text-blue-600 border-b-2 border-blue-600' 
+                    : 'text-black-500 hover:text-blue-600'
+                }`}
+                onClick={() => setActiveTab('visualizations')}
+              >
+                Data Visualizations
+              </button>
+              <button
+                className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
+                  activeTab === 'corrosion' 
+                    ? 'text-blue-600 border-b-2 border-blue-600' 
+                    : 'text-black-500 hover:text-blue-600'
+                }`}
+                onClick={() => setActiveTab('corrosion')}
+              >
+                Corrosion Risk
+              </button>
+            </div>
+          </div>
+        </nav>
         
         {activeTab === 'realtime' && (
           <>
@@ -837,8 +845,9 @@ const App = () => {
             <Map />
           </>
         )}
-        {activeTab === 'historical' && <DataTable />}
+        {activeTab === 'table' && <DataTable />}
         {activeTab === 'visualizations' && <DataVisualizations />}
+        {activeTab === 'corrosion' && <CorrosionRiskAssessment />}
         
         <Footer />
       </div>
