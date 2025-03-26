@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue, query, orderByChild, limitToLast, get } from 'firebase/database';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardHeader, CardTitle, CardContent } from "./components/ui/card";
+import PropTypes from 'prop-types';
 import Map from './components/Map';
 import CorrosionRiskAssessment from './components/CorrosionRiskAssessment';
+import WaterQualityClassification from './components/WaterQualityClassification';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -17,7 +19,7 @@ const firebaseConfig = {
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
 
-const Dial = ({ value, min, max, optimal, unit, title, getStatus }) => {
+const Dial = ({ value, min, max, unit, title, getStatus }) => {
   const percentage = ((value - min) / (max - min)) * 100;
   const rotation = (percentage * 2.2) - 110;
   const status = getStatus(value);
@@ -118,13 +120,20 @@ const Dial = ({ value, min, max, optimal, unit, title, getStatus }) => {
   );
 };
 
+Dial.propTypes = {
+  value: PropTypes.number.isRequired,
+  min: PropTypes.number.isRequired,
+  max: PropTypes.number.isRequired,
+  unit: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  getStatus: PropTypes.func.isRequired
+};
+
 const App = () => {
   const [sensorData, setSensorData] = useState([]);
   const [latestData, setLatestData] = useState(null);
   const [predictions, setPredictions] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('realtime'); 
+  const [activeTab, setActiveTab] = useState('realtime');
 
   useEffect(() => {
     const sensorRef = ref(database, 'sensor_data');
@@ -151,16 +160,12 @@ const App = () => {
 
   useEffect(() => {
     const fetchPredictions = async () => {
-      setIsLoading(true);
       try {
         const response = await fetch('https://water-quality-ml-service.onrender.com/predict'); 
         const data = await response.json();
         setPredictions(data);
       } catch (error) {
         console.error('Error fetching predictions:', error);
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -221,7 +226,6 @@ const App = () => {
                   value={latestData.ph}
                   min={0}
                   max={14}
-                  optimal={7}
                   unit="pH"
                   title="pH Level"
                   getStatus={getPhStatus}
@@ -230,7 +234,6 @@ const App = () => {
                   value={latestData.turbidity}
                   min={0}
                   max={20}
-                  optimal={2.5}
                   unit="NTU"
                   title="Turbidity"
                   getStatus={getTurbidityStatus}
@@ -239,7 +242,6 @@ const App = () => {
                   value={latestData.tds}
                   min={0}
                   max={1200}
-                  optimal={450}
                   unit="ppm"
                   title="TDS"
                   getStatus={getTdsStatus}
@@ -248,7 +250,6 @@ const App = () => {
                   value={latestData.temperature}
                   min={0}
                   max={50}
-                  optimal={25}
                   unit="°C"
                   title="Temperature"
                   getStatus={getTemperatureStatus}
@@ -257,7 +258,6 @@ const App = () => {
                   value={latestData.conductivity}
                   min={0}
                   max={1500}
-                  optimal={500}
                   unit="μS/cm"
                   title="Conductivity"
                   getStatus={getConductivityStatus}
@@ -835,6 +835,16 @@ const App = () => {
               >
                 Corrosion Risk
               </button>
+              <button
+                className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
+                  activeTab === 'quality' 
+                    ? 'text-blue-600 border-b-2 border-blue-600' 
+                    : 'text-black-500 hover:text-blue-600'
+                }`}
+                onClick={() => setActiveTab('quality')}
+              >
+                Quality Grade
+              </button>
             </div>
           </div>
         </nav>
@@ -848,6 +858,7 @@ const App = () => {
         {activeTab === 'table' && <DataTable />}
         {activeTab === 'visualizations' && <DataVisualizations />}
         {activeTab === 'corrosion' && <CorrosionRiskAssessment />}
+        {activeTab === 'quality' && <WaterQualityClassification />}
         
         <Footer />
       </div>

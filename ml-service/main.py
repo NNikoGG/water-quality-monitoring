@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.utils.firebase_client import fetch_sensor_data
 from app.models.lstm_model import WaterQualityLSTM
 from app.models.corrosion_predictor import CorrosionPredictor
+from app.models.water_quality_classifier import WaterQualityClassifier
 from app.utils.data_processor import combine_and_prepare_data, analyze_data_distribution
 import numpy as np
 from datetime import datetime, timedelta
@@ -57,6 +58,31 @@ try:
     corrosion_model.load_model('app/models/saved/corrosion_model', 'app/models/saved/corrosion_scaler.pkl')
 except OSError:
     print("No saved corrosion model found. Model will need to be trained with corrosion data.")
+
+# Initialize water quality classifier
+quality_classifier = WaterQualityClassifier()
+try:
+    print("\nLoading water quality classifier...")
+    quality_classifier.load_model('app/models/saved/quality_classifier', 'app/models/saved/quality_scaler.pkl')
+    print("Water quality classifier loaded successfully!")
+except OSError as e:
+    print(f"\nError loading quality classifier: {str(e)}")
+    print("No saved quality classifier found. Model will be trained with available data.")
+    # Train with available data
+    print("\nTraining new quality classifier...")
+    df = fetch_sensor_data()
+    if not df.empty:
+        training_results = quality_classifier.train(df)
+        print(f"\nTraining results: {training_results}")
+        # Save the trained model
+        os.makedirs('app/models/saved', exist_ok=True)
+        quality_classifier.save_model(
+            'app/models/saved/quality_classifier',
+            'app/models/saved/quality_scaler.pkl'
+        )
+        print("New quality classifier saved successfully!")
+    else:
+        print("No data available for training")
 
 @app.get("/predict")
 async def get_predictions():
@@ -222,4 +248,54 @@ async def analyze_corrosion_data(
     except Exception as e:
         print(f"Analysis error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/train-quality-classifier")
+async def train_quality_classifier():
+    try:
+        # Fetch all available data
+        df = fetch_sensor_data()
+        if df.empty:
+            raise HTTPException(status_code=400, detail="No sensor data available")
+        
+        # Train the model
+        training_results = quality_classifier.train(df)
+        
+        # Save the trained model
+        os.makedirs('app/models/saved', exist_ok=True)
+        quality_classifier.save_model(
+            'app/models/saved/quality_classifier',
+            'app/models/saved/quality_scaler.pkl'
+        )
+        
+        return {
+            "message": "Quality classifier trained successfully",
+            "training_results": training_results
+        }
+        
+    except Exception as e:
+        print(f"Training error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/predict-quality")
+async def predict_quality():
+    try:
+        # Fetch recent data
+        print("\nFetching recent data for quality prediction...")
+        df = fetch_sensor_data()
+        if df.empty:
+            return {"error": "No sensor data available"}
+        
+        # Get latest reading
+        latest_reading = df.iloc[-1].to_dict()
+        print(f"\nLatest reading: {latest_reading}")
+        
+        # Make prediction
+        print("\nMaking prediction...")
+        prediction = quality_classifier.predict(latest_reading)
+        print(f"\nPrediction result: {prediction}")
+        
+        return prediction
+    except Exception as e:
+        print(f"\nError in predict_quality: {str(e)}")
+        return {"error": str(e)}
 
