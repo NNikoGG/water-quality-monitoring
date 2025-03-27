@@ -555,6 +555,73 @@ const CorrosionRiskAssessment = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Risk Criteria */}
+      <Card className="bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="text-black">Risk Criteria</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-xl font-bold text-green-600 mb-2">Low Risk</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                  <li>pH: 6.8 - 7.5</li>
+                  <li>TDS: {'<'} 350 ppm</li>
+                  <li>Temperature: 26 - 29°C</li>
+                  <li>Conductivity: {'<'} 700 μS/cm</li>
+                  <li>No severe conditions present</li>
+                </ul>
+                <p className="mt-2 text-sm text-black/80">
+                  Optimal conditions with minimal corrosion potential
+                </p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-xl font-bold text-yellow-600 mb-2">Medium Risk</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                  <li>pH: 6.5 - 6.8 or 7.5 - 8.0</li>
+                  <li>TDS: 350 - 450 ppm</li>
+                  <li>Temperature: Deviation of 1.5 - 3°C from optimal</li>
+                  <li>Conductivity: 700 - 800 μS/cm</li>
+                  <li>One severe or two moderate conditions</li>
+                </ul>
+                <p className="mt-2 text-sm text-black/80">
+                  Conditions require monitoring and potential intervention
+                </p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-xl font-bold text-red-600 mb-2">High Risk</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                  <li>pH: {'<'} 6.5</li>
+                  <li>TDS: {'>'} 450 ppm</li>
+                  <li>Temperature: Deviation {'>'} 3°C from optimal</li>
+                  <li>Conductivity: {'>'} 800 μS/cm</li>
+                  <li>Multiple severe conditions present</li>
+                </ul>
+                <p className="mt-2 text-sm text-black/80">
+                  Immediate attention required to prevent corrosion damage
+                </p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-xl font-bold text-black mb-2">Risk Factors</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                  <li>Severe pH drop ({'<'} 6.5)</li>
+                  <li>High mineral content (TDS {'>'} 450)</li>
+                  <li>Temperature instability</li>
+                  <li>High conductivity ({'>'} 800 μS/cm)</li>
+                  <li>Multiple parameter deviations</li>
+                </ul>
+                <p className="mt-2 text-sm text-black/80">
+                  Combinations of these factors increase corrosion probability
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

@@ -743,25 +743,25 @@ const App = () => {
                   <div className="flex flex-col md:flex-row items-center justify-center gap-4">
                     <div className="flex flex-col items-center">
                       <div className="w-20 h-20 bg-indigo-100 rounded-lg flex items-center justify-center border-2 border-indigo-500">
-                        <span className="text-xs text-black text-center">Input Layer<br/>(5 features)</span>
+                        <span className="text-xs text-black text-center">Input Layer<br/>(10 timesteps,<br/>5 features)</span>
                       </div>
                     </div>
                     <div className="hidden md:block text-2xl text-black">→</div>
                     <div className="flex flex-col items-center">
                       <div className="w-20 h-20 bg-purple-100 rounded-lg flex items-center justify-center border-2 border-purple-500">
-                        <span className="text-xs text-black text-center">LSTM Layer<br/>(128 units)</span>
+                        <span className="text-xs text-black text-center">LSTM Layer<br/>(50 units)</span>
                       </div>
                     </div>
                     <div className="hidden md:block text-2xl text-black">→</div>
                     <div className="flex flex-col items-center">
                       <div className="w-20 h-20 bg-blue-100 rounded-lg flex items-center justify-center border-2 border-blue-500">
-                        <span className="text-xs text-black text-center">LSTM Layer<br/>(64 units)</span>
+                        <span className="text-xs text-black text-center">Dense Layer<br/>(25 units)</span>
                       </div>
                     </div>
                     <div className="hidden md:block text-2xl text-black">→</div>
                     <div className="flex flex-col items-center">
                       <div className="w-20 h-20 bg-green-100 rounded-lg flex items-center justify-center border-2 border-green-500">
-                        <span className="text-xs text-black text-center">Dense Layer<br/>(5 units)</span>
+                        <span className="text-xs text-black text-center">Output Layer<br/>(5 features)</span>
                       </div>
                     </div>
                   </div>
