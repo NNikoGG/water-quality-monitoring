@@ -193,16 +193,16 @@ const CorrosionRiskAssessment = () => {
   return (
     <div className="space-y-8">
       {/* Current Risk Assessment */}
-      <Card className="bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-black">Corrosion Risk Assessment</CardTitle>
+          <CardTitle className="text-slate-100">Corrosion Risk Assessment</CardTitle>
         </CardHeader>
         <CardContent className="p-2 md:p-6">
-          <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg">
+          <div className="bg-slate-800/50 backdrop-blur-sm p-6 rounded-lg">
             <div className="flex items-center gap-4 mb-6">
               <span className="text-4xl">{riskData && getRiskIcon(riskData.risk_level)}</span>
               <div>
-                <h3 className="text-xl font-semibold text-black">Risk Level</h3>
+                <h3 className="text-xl font-semibold text-slate-100">Risk Level</h3>
                 <p className={`text-2xl font-bold ${getRiskColor(riskData?.risk_level)}`}>
                   {riskData?.risk_level}
                 </p>
@@ -211,7 +211,7 @@ const CorrosionRiskAssessment = () => {
 
             {/* Risk Scale */}
             <div className="mb-4">
-              <div className="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+              <div className="relative w-full h-4 bg-slate-700 rounded-full overflow-hidden">
                 <div 
                   className="absolute top-0 left-0 h-full transition-all duration-500 rounded-full"
                   style={{
@@ -225,13 +225,13 @@ const CorrosionRiskAssessment = () => {
                 />
               </div>
               <div className="flex justify-between mt-1">
-                <span className="text-sm text-black">0%</span>
-                <span className="text-sm text-black">50%</span>
-                <span className="text-sm text-black">100%</span>
+                <span className="text-sm text-slate-100">0%</span>
+                <span className="text-sm text-slate-100">50%</span>
+                <span className="text-sm text-slate-100">100%</span>
               </div>
             </div>
 
-            <p className="text-sm text-black/80 mt-4">
+            <p className="text-sm text-slate-400 mt-4">
               Last updated: {new Date(riskData?.timestamp).toLocaleString()}
             </p>
           </div>
@@ -239,38 +239,38 @@ const CorrosionRiskAssessment = () => {
       </Card>
 
       {/* Model Information */}
-      <Card className="bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-black">Model Information</CardTitle>
+          <CardTitle className="text-slate-100">Model Information</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Architecture Visualization */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-black mb-4">Neural Network Architecture</h3>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-100 mb-4">Neural Network Architecture</h3>
               <div className="flex flex-col items-center justify-center gap-4">
                 <div className="flex flex-col md:flex-row items-center justify-center gap-4">
                   <div className="flex flex-col items-center">
-                    <div className="w-20 h-20 bg-indigo-100 rounded-lg flex items-center justify-center border-2 border-indigo-500">
-                      <span className="text-xs text-black text-center">Input Layer<br/>(10 timesteps)</span>
+                    <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
+                      <span className="text-xs text-slate-100 text-center">Input Layer<br/>(10 timesteps)</span>
                     </div>
                   </div>
-                  <div className="hidden md:block text-2xl text-black">→</div>
+                  <div className="hidden md:block text-2xl text-slate-100">→</div>
                   <div className="flex flex-col items-center">
-                    <div className="w-20 h-20 bg-purple-100 rounded-lg flex items-center justify-center border-2 border-purple-500">
-                      <span className="text-xs text-black text-center">LSTM Layer<br/>(64 units)</span>
+                    <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
+                      <span className="text-xs text-slate-100 text-center">LSTM Layer<br/>(64 units)</span>
                     </div>
                   </div>
-                  <div className="hidden md:block text-2xl text-black">→</div>
+                  <div className="hidden md:block text-2xl text-slate-100">→</div>
                   <div className="flex flex-col items-center">
-                    <div className="w-20 h-20 bg-blue-100 rounded-lg flex items-center justify-center border-2 border-blue-500">
-                      <span className="text-xs text-black text-center">LSTM Layer<br/>(32 units)</span>
+                    <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
+                      <span className="text-xs text-slate-100 text-center">LSTM Layer<br/>(32 units)</span>
                     </div>
                   </div>
-                  <div className="hidden md:block text-2xl text-black">→</div>
+                  <div className="hidden md:block text-2xl text-slate-100">→</div>
                   <div className="flex flex-col items-center">
-                    <div className="w-20 h-20 bg-green-100 rounded-lg flex items-center justify-center border-2 border-green-500">
-                      <span className="text-xs text-black text-center">Dense Layer<br/>(1 unit)</span>
+                    <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
+                      <span className="text-xs text-slate-100 text-center">Dense Layer<br/>(1 unit)</span>
                     </div>
                   </div>
                 </div>
@@ -278,33 +278,33 @@ const CorrosionRiskAssessment = () => {
             </div>
 
             {/* Sliding Window Visualization */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-black mb-4">Sliding Window Approach</h3>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-100 mb-4">Sliding Window Approach</h3>
               <div className="relative overflow-x-auto">
                 <div className="flex items-center space-x-1 mb-4">
                   {[...Array(10)].map((_, i) => (
-                    <div key={i} className="flex-1 h-12 bg-blue-100 rounded-lg border-2 border-blue-500 flex items-center justify-center">
-                      <span className="text-xs text-black">R{i + 1}</span>
+                    <div key={i} className="flex-1 h-12 bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center">
+                      <span className="text-xs text-slate-100">R{i + 1}</span>
                     </div>
                   ))}
-                  <div className="flex-1 h-12 bg-green-100 rounded-lg border-2 border-green-500 flex items-center justify-center">
-                    <span className="text-xs text-black">Pred</span>
+                  <div className="flex-1 h-12 bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center">
+                    <span className="text-xs text-slate-100">Pred</span>
                   </div>
                 </div>
                 <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
                   <div className="relative h-full">
-                    <div className="absolute top-0 left-0 w-[91%] h-full border-2 border-blue-500 rounded-lg border-dashed"></div>
+                    <div className="absolute top-0 left-0 w-[91%] h-full border-2 border-cyan-500 rounded-lg border-dashed"></div>
                   </div>
                 </div>
               </div>
-              <p className="text-xs text-black/80 mt-2">
+              <p className="text-xs text-slate-400 mt-2">
                 Analyzes 10 consecutive readings to predict the next risk level
               </p>
             </div>
 
             {/* Parameters Visualization */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-black mb-4">Input Parameters</h3>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-100 mb-4">Input Parameters</h3>
               <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
                 {[
                   { symbol: 'pH', name: 'Acidity', color: 'red' },
@@ -313,26 +313,26 @@ const CorrosionRiskAssessment = () => {
                   { symbol: 'TDS', name: 'Total Dissolved Solids', color: 'green' },
                   { symbol: 'C', name: 'Conductivity', color: 'purple' }
                 ].map((param) => (
-                  <div key={param.symbol} className="flex flex-col items-center p-2 bg-white/20 rounded-lg">
-                    <div className={`w-10 h-10 bg-${param.color}-100 rounded-full flex items-center justify-center mb-1`}>
-                      <span className="text-sm">{param.symbol}</span>
+                  <div key={param.symbol} className="flex flex-col items-center p-2 bg-slate-700/50 rounded-lg">
+                    <div className="w-10 h-10 bg-slate-600/50 rounded-full flex items-center justify-center mb-1 border border-cyan-500">
+                      <span className="text-sm text-slate-100">{param.symbol}</span>
                     </div>
-                    <span className="text-xs text-black text-center">{param.name}</span>
+                    <span className="text-xs text-slate-100 text-center">{param.name}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Update Frequency */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-black mb-4">Real-time Updates</h3>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-100 mb-4">Real-time Updates</h3>
               <div className="flex items-center justify-center">
-                <div className="w-20 h-20 rounded-full bg-blue-100 border-4 border-blue-500 flex items-center justify-center relative">
-                  <div className="absolute w-full h-full rounded-full border-4 border-transparent border-t-blue-500 animate-spin"></div>
-                  <span className="text-black text-center text-sm">30s<br/>Interval</span>
+                <div className="w-20 h-20 rounded-full bg-slate-700/50 border-4 border-cyan-500 flex items-center justify-center relative">
+                  <div className="absolute w-full h-full rounded-full border-4 border-transparent border-t-cyan-500 animate-spin"></div>
+                  <span className="text-slate-100 text-center text-sm">30s<br/>Interval</span>
                 </div>
               </div>
-              <p className="text-xs text-black/80 mt-2 text-center">
+              <p className="text-xs text-slate-400 mt-2 text-center">
                 Predictions update every 30 seconds
               </p>
             </div>
@@ -341,19 +341,19 @@ const CorrosionRiskAssessment = () => {
       </Card>
 
       {/* What If Analysis */}
-      <Card className="bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-black">What If Analysis</CardTitle>
+          <CardTitle className="text-slate-100">What If Analysis</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Parameter Controls */}
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-black">Sequence Simulation</h3>
+              <h3 className="text-lg font-semibold text-slate-100">Sequence Simulation</h3>
               
               {/* Time Step Selection */}
               <div className="space-y-4">
-                <h4 className="text-sm font-medium text-black">Select Time Step</h4>
+                <h4 className="text-sm font-medium text-slate-100">Select Time Step</h4>
                 <div className="flex space-x-2 overflow-x-auto pb-2">
                   {sequence.map((_, index) => (
                     <button
@@ -361,15 +361,15 @@ const CorrosionRiskAssessment = () => {
                       onClick={() => handleTimeStepChange(index)}
                       className={`px-3 py-1 rounded ${
                         selectedTimeStep === index
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-white/20 text-black hover:bg-blue-100'
+                          ? 'bg-cyan-600 text-white'
+                          : 'bg-slate-700/50 text-slate-100 hover:bg-slate-600/50'
                       }`}
                     >
                       T{index + 1}
                     </button>
                   ))}
                 </div>
-                <p className="text-sm text-black/60">
+                <p className="text-sm text-slate-400">
                   Editing reading at time step T{selectedTimeStep + 1}
                 </p>
               </div>
@@ -378,8 +378,8 @@ const CorrosionRiskAssessment = () => {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <label className="text-sm font-medium text-black">pH Level</label>
-                    <span className="text-sm text-black/60">0 - 14</span>
+                    <label className="text-sm font-medium text-slate-100">pH Level</label>
+                    <span className="text-sm text-slate-400">0 - 14</span>
                   </div>
                   <input 
                     type="range" 
@@ -390,15 +390,15 @@ const CorrosionRiskAssessment = () => {
                     className="w-full"
                     onChange={(e) => handleParameterChange('ph', e.target.value)}
                   />
-                  <div className="text-center text-sm font-medium text-black">
+                  <div className="text-center text-sm font-medium text-slate-100">
                     {simulatedParams.ph}
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <label className="text-sm font-medium text-black">Turbidity (NTU)</label>
-                    <span className="text-sm text-black/60">0 - 10</span>
+                    <label className="text-sm font-medium text-slate-100">Turbidity (NTU)</label>
+                    <span className="text-sm text-slate-400">0 - 10</span>
                   </div>
                   <input 
                     type="range" 
@@ -409,15 +409,15 @@ const CorrosionRiskAssessment = () => {
                     className="w-full"
                     onChange={(e) => handleParameterChange('turbidity', e.target.value)}
                   />
-                  <div className="text-center text-sm font-medium text-black">
+                  <div className="text-center text-sm font-medium text-slate-100">
                     {simulatedParams.turbidity}
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <label className="text-sm font-medium text-black">TDS (ppm)</label>
-                    <span className="text-sm text-black/60">0 - 1000</span>
+                    <label className="text-sm font-medium text-slate-100">TDS (ppm)</label>
+                    <span className="text-sm text-slate-400">0 - 1000</span>
                   </div>
                   <input 
                     type="range" 
@@ -428,15 +428,15 @@ const CorrosionRiskAssessment = () => {
                     className="w-full"
                     onChange={(e) => handleParameterChange('tds', e.target.value)}
                   />
-                  <div className="text-center text-sm font-medium text-black">
+                  <div className="text-center text-sm font-medium text-slate-100">
                     {simulatedParams.tds}
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <label className="text-sm font-medium text-black">Temperature (°C)</label>
-                    <span className="text-sm text-black/60">0 - 100</span>
+                    <label className="text-sm font-medium text-slate-100">Temperature (°C)</label>
+                    <span className="text-sm text-slate-400">0 - 100</span>
                   </div>
                   <input 
                     type="range" 
@@ -447,15 +447,15 @@ const CorrosionRiskAssessment = () => {
                     className="w-full"
                     onChange={(e) => handleParameterChange('temperature', e.target.value)}
                   />
-                  <div className="text-center text-sm font-medium text-black">
+                  <div className="text-center text-sm font-medium text-slate-100">
                     {simulatedParams.temperature}
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <label className="text-sm font-medium text-black">Conductivity (μS/cm)</label>
-                    <span className="text-sm text-black/60">0 - 1500</span>
+                    <label className="text-sm font-medium text-slate-100">Conductivity (μS/cm)</label>
+                    <span className="text-sm text-slate-400">0 - 1500</span>
                   </div>
                   <input 
                     type="range" 
@@ -466,13 +466,13 @@ const CorrosionRiskAssessment = () => {
                     className="w-full"
                     onChange={(e) => handleParameterChange('conductivity', e.target.value)}
                   />
-                  <div className="text-center text-sm font-medium text-black">
+                  <div className="text-center text-sm font-medium text-slate-100">
                     {simulatedParams.conductivity}
                   </div>
                 </div>
 
                 <button
-                  className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  className="w-full mt-4 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
                   onClick={simulateCorrosion}
                 >
                   Simulate Corrosion Risk
@@ -482,24 +482,24 @@ const CorrosionRiskAssessment = () => {
 
             {/* Simulation Results */}
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-black">Simulation Results</h3>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-100">Simulation Results</h3>
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
                 {/* Sequence Visualization */}
                 <div className="mb-6">
-                  <h4 className="text-sm font-medium text-black mb-2">Sequence Overview</h4>
+                  <h4 className="text-sm font-medium text-slate-100 mb-2">Sequence Overview</h4>
                   <div className="flex items-center space-x-1">
                     {sequence.map((reading, index) => (
                       <div
                         key={index}
                         className={`flex-1 h-20 ${
                           selectedTimeStep === index
-                            ? 'bg-blue-100 border-2 border-blue-500'
-                            : 'bg-white/20'
+                            ? 'bg-slate-600/50 border-2 border-cyan-500'
+                            : 'bg-slate-700/50'
                         } rounded-lg p-1 text-xs text-center`}
                       >
-                        <div className="font-medium">T{index + 1}</div>
-                        <div>pH: {reading.ph.toFixed(1)}</div>
-                        <div>TDS: {reading.tds}</div>
+                        <div className="font-medium text-slate-100">T{index + 1}</div>
+                        <div className="text-slate-100">pH: {reading.ph.toFixed(1)}</div>
+                        <div className="text-slate-100">TDS: {reading.tds}</div>
                       </div>
                     ))}
                   </div>
@@ -508,7 +508,7 @@ const CorrosionRiskAssessment = () => {
                 <div className="flex items-center gap-4 mb-6">
                   <span className="text-4xl">{simulatedRisk && getRiskIcon(simulatedRisk.risk_level)}</span>
                   <div>
-                    <h3 className="text-xl font-semibold text-black">Predicted Risk Level</h3>
+                    <h3 className="text-xl font-semibold text-slate-100">Predicted Risk Level</h3>
                     <p className={`text-2xl font-bold ${getRiskColor(simulatedRisk?.risk_level)}`}>
                       {simulatedRisk?.risk_level || 'No Risk'}
                     </p>
@@ -517,7 +517,7 @@ const CorrosionRiskAssessment = () => {
 
                 {/* Risk Scale */}
                 <div className="mb-4">
-                  <div className="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="relative w-full h-4 bg-slate-700 rounded-full overflow-hidden">
                     <div 
                       className="absolute top-0 left-0 h-full transition-all duration-500 rounded-full"
                       style={{
@@ -531,15 +531,15 @@ const CorrosionRiskAssessment = () => {
                     />
                   </div>
                   <div className="flex justify-between mt-1">
-                    <span className="text-sm text-black">0%</span>
-                    <span className="text-sm text-black">50%</span>
-                    <span className="text-sm text-black">100%</span>
+                    <span className="text-sm text-slate-100">0%</span>
+                    <span className="text-sm text-slate-100">50%</span>
+                    <span className="text-sm text-slate-100">100%</span>
                   </div>
                 </div>
 
                 <div className="space-y-4 mt-6">
-                  <h4 className="font-semibold text-black">Risk Factors</h4>
-                  <ul className="space-y-2 text-sm text-black/80">
+                  <h4 className="font-semibold text-slate-100">Risk Factors</h4>
+                  <ul className="space-y-2 text-sm text-slate-400">
                     {getRiskFactors(simulatedParams).map((factor, index) => (
                       <li key={index} className="flex items-center gap-2">
                         <span className={factor.severity === 'high' ? 'text-red-500' : 'text-yellow-500'}>
@@ -557,64 +557,64 @@ const CorrosionRiskAssessment = () => {
       </Card>
 
       {/* Risk Criteria */}
-      <Card className="bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-black">Risk Criteria</CardTitle>
+          <CardTitle className="text-slate-100">Risk Criteria</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <h3 className="text-xl font-bold text-green-600 mb-2">Low Risk</h3>
-                <ul className="list-disc list-inside space-y-1 text-sm">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-xl font-bold text-green-500 mb-2">Low Risk</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm text-slate-400">
                   <li>pH: 6.8 - 7.5</li>
                   <li>TDS: {'<'} 350 ppm</li>
                   <li>Temperature: 26 - 29°C</li>
                   <li>Conductivity: {'<'} 700 μS/cm</li>
                   <li>No severe conditions present</li>
                 </ul>
-                <p className="mt-2 text-sm text-black/80">
+                <p className="mt-2 text-sm text-slate-400">
                   Optimal conditions with minimal corrosion potential
                 </p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <h3 className="text-xl font-bold text-yellow-600 mb-2">Medium Risk</h3>
-                <ul className="list-disc list-inside space-y-1 text-sm">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-xl font-bold text-yellow-500 mb-2">Medium Risk</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm text-slate-400">
                   <li>pH: 6.5 - 6.8 or 7.5 - 8.0</li>
                   <li>TDS: 350 - 450 ppm</li>
                   <li>Temperature: Deviation of 1.5 - 3°C from optimal</li>
                   <li>Conductivity: 700 - 800 μS/cm</li>
                   <li>One severe or two moderate conditions</li>
                 </ul>
-                <p className="mt-2 text-sm text-black/80">
+                <p className="mt-2 text-sm text-slate-400">
                   Conditions require monitoring and potential intervention
                 </p>
               </div>
             </div>
             <div className="space-y-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <h3 className="text-xl font-bold text-red-600 mb-2">High Risk</h3>
-                <ul className="list-disc list-inside space-y-1 text-sm">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-xl font-bold text-red-500 mb-2">High Risk</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm text-slate-400">
                   <li>pH: {'<'} 6.5</li>
                   <li>TDS: {'>'} 450 ppm</li>
                   <li>Temperature: Deviation {'>'} 3°C from optimal</li>
                   <li>Conductivity: {'>'} 800 μS/cm</li>
                   <li>Multiple severe conditions present</li>
                 </ul>
-                <p className="mt-2 text-sm text-black/80">
+                <p className="mt-2 text-sm text-slate-400">
                   Immediate attention required to prevent corrosion damage
                 </p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <h3 className="text-xl font-bold text-black mb-2">Risk Factors</h3>
-                <ul className="list-disc list-inside space-y-1 text-sm">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-xl font-bold text-slate-100 mb-2">Risk Factors</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm text-slate-400">
                   <li>Severe pH drop ({'<'} 6.5)</li>
                   <li>High mineral content (TDS {'>'} 450)</li>
                   <li>Temperature instability</li>
                   <li>High conductivity ({'>'} 800 μS/cm)</li>
                   <li>Multiple parameter deviations</li>
                 </ul>
-                <p className="mt-2 text-sm text-black/80">
+                <p className="mt-2 text-sm text-slate-400">
                   Combinations of these factors increase corrosion probability
                 </p>
               </div>

@@ -40,9 +40,9 @@ const Map = () => {
   }, []);
 
   return (
-    <Card className="mt-8 bg-white/50 backdrop-blur-sm border border-black/20 rounded-lg">
+    <Card className="mt-8 bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle>Location Tracker</CardTitle>
+        <CardTitle className="text-slate-100">Location Tracker</CardTitle>
       </CardHeader>
       <CardContent>
         <div 

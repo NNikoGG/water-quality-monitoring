@@ -158,23 +158,23 @@ const WaterQualityClassification = () => {
   return (
     <div className="space-y-8">
       {/* Current Quality Grade */}
-      <Card className="bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-black">Water Quality Grade</CardTitle>
+          <CardTitle className="text-slate-100">Water Quality Grade</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-2xl font-bold mb-2">Current Grade</h3>
+              <h3 className="text-2xl font-bold mb-2 text-slate-100">Current Grade</h3>
               <p className={`text-6xl font-bold ${getGradeColor(qualityData?.grade)}`}>
                 {qualityData?.grade}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-lg text-black/80">
+              <p className="text-lg text-slate-100">
                 {getGradeDescription(qualityData?.grade)}
               </p>
-              <p className="text-sm text-black/60 mt-2">
+              <p className="text-sm text-slate-400 mt-2">
                 Last updated: {new Date(qualityData?.timestamp).toLocaleString()}
               </p>
             </div>
@@ -182,14 +182,14 @@ const WaterQualityClassification = () => {
 
           {/* Grade Probabilities */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold">Grade Probabilities</h4>
+            <h4 className="text-lg font-semibold text-slate-100">Grade Probabilities</h4>
             <div className="grid grid-cols-4 gap-4">
               {Object.entries(qualityData?.grade_probabilities || {}).map(([grade, probability]) => (
-                <div key={grade} className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <div key={grade} className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4">
                   <div className={`text-2xl font-bold ${getGradeColor(grade)} mb-2`}>
                     {grade}
                   </div>
-                  <div className="text-lg">
+                  <div className="text-lg text-slate-100">
                     {(probability * 100).toFixed(1)}%
                   </div>
                 </div>
@@ -200,35 +200,35 @@ const WaterQualityClassification = () => {
       </Card>
 
       {/* Model Information */}
-      <Card className="bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-black">Model Information</CardTitle>
+          <CardTitle className="text-slate-100">Model Information</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Random Forest Architecture */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-black mb-4">Random Forest Architecture</h3>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-100 mb-4">Random Forest Architecture</h3>
               <div className="flex flex-col items-center space-y-4">
                 <div className="grid grid-cols-3 gap-4 w-full">
                   {/* Sample Decision Trees */}
                   {[1, 2, 3].map((tree) => (
                     <div key={tree} className="relative">
-                      <div className="w-full aspect-square bg-green-100 rounded-lg border-2 border-green-500 flex items-center justify-center p-2">
-                        <div className="text-xs text-center text-black">
+                      <div className="w-full aspect-square bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center p-2">
+                        <div className="text-xs text-center text-slate-100">
                           Decision<br/>Tree {tree}
                         </div>
                       </div>
                       {/* Tree Branches */}
                       <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
-                        <div className="w-0.5 h-4 bg-green-500"></div>
+                        <div className="w-0.5 h-4 bg-cyan-500"></div>
                       </div>
                     </div>
                   ))}
                 </div>
                 {/* Voting Mechanism */}
-                <div className="w-full bg-blue-100 rounded-lg border-2 border-blue-500 p-4 mt-6">
-                  <p className="text-xs text-center text-black">
+                <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4 mt-6">
+                  <p className="text-xs text-center text-slate-100">
                     Majority Voting System<br/>
                     (100 Trees Total)
                   </p>
@@ -237,41 +237,41 @@ const WaterQualityClassification = () => {
             </div>
 
             {/* Classification Process */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-black mb-4">Classification Process</h3>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-100 mb-4">Classification Process</h3>
               <div className="flex flex-col justify-center min-h-[200px]">
                 <div className="flex items-center space-x-4">
-                  <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center border-2 border-indigo-500">
-                    <span className="text-sm text-black text-center">Input<br/>Parameters</span>
+                  <div className="w-20 h-20 bg-slate-700/50 rounded-full flex items-center justify-center border-2 border-cyan-500">
+                    <span className="text-sm text-slate-100 text-center">Input<br/>Parameters</span>
                   </div>
-                  <div className="flex-1 h-0.5 bg-indigo-500"></div>
-                  <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center border-2 border-purple-500">
-                    <span className="text-sm text-black text-center">Feature<br/>Analysis</span>
+                  <div className="flex-1 h-0.5 bg-cyan-500"></div>
+                  <div className="w-20 h-20 bg-slate-700/50 rounded-full flex items-center justify-center border-2 border-cyan-500">
+                    <span className="text-sm text-slate-100 text-center">Feature<br/>Analysis</span>
                   </div>
-                  <div className="flex-1 h-0.5 bg-purple-500"></div>
-                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center border-2 border-green-500">
-                    <span className="text-sm text-black text-center">Grade<br/>Decision</span>
+                  <div className="flex-1 h-0.5 bg-cyan-500"></div>
+                  <div className="w-20 h-20 bg-slate-700/50 rounded-full flex items-center justify-center border-2 border-cyan-500">
+                    <span className="text-sm text-slate-100 text-center">Grade<br/>Decision</span>
                   </div>
                 </div>
-                <div className="text-xs text-black/80 text-center mt-4">
+                <div className="text-xs text-slate-400 text-center mt-4">
                   Real-time classification every 30 seconds
                 </div>
               </div>
             </div>
 
             {/* Feature Importance Visualization */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-black mb-4">Feature Importance</h3>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-100 mb-4">Feature Importance</h3>
               <div className="space-y-3">
                 {Object.entries(qualityData?.feature_importance || {}).map(([feature, importance]) => (
                   <div key={feature} className="relative">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-black">{feature}</span>
-                      <span className="text-sm text-black">{(importance * 100).toFixed(1)}%</span>
+                      <span className="text-sm font-medium text-slate-100">{feature}</span>
+                      <span className="text-sm text-slate-100">{(importance * 100).toFixed(1)}%</span>
                     </div>
-                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-blue-600 rounded-full"
+                        className="h-full bg-cyan-500 rounded-full"
                         style={{ width: `${importance * 100}%` }}
                       ></div>
                     </div>
@@ -281,32 +281,32 @@ const WaterQualityClassification = () => {
             </div>
 
             {/* Model Performance */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-black mb-4">Model Performance</h3>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-100 mb-4">Model Performance</h3>
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/20 rounded-lg p-4">
-                  <h4 className="text-sm font-semibold text-black mb-2">Training Data</h4>
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-slate-100 mb-2">Training Data</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-xs text-black">Samples:</span>
-                      <span className="text-xs text-black">15,000+</span>
+                      <span className="text-xs text-slate-100">Samples:</span>
+                      <span className="text-xs text-slate-100">15,000+</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-xs text-black">Features:</span>
-                      <span className="text-xs text-black">5</span>
+                      <span className="text-xs text-slate-100">Features:</span>
+                      <span className="text-xs text-slate-100">5</span>
                     </div>
                   </div>
                 </div>
-                <div className="bg-white/20 rounded-lg p-4">
-                  <h4 className="text-sm font-semibold text-black mb-2">Model Details</h4>
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <h4 className="text-sm font-semibold text-slate-100 mb-2">Model Details</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-xs text-black">Trees:</span>
-                      <span className="text-xs text-black">100</span>
+                      <span className="text-xs text-slate-100">Trees:</span>
+                      <span className="text-xs text-slate-100">100</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-xs text-black">Max Depth:</span>
-                      <span className="text-xs text-black">10</span>
+                      <span className="text-xs text-slate-100">Max Depth:</span>
+                      <span className="text-xs text-slate-100">10</span>
                     </div>
                   </div>
                 </div>
@@ -317,20 +317,20 @@ const WaterQualityClassification = () => {
       </Card>
 
       {/* What If Analysis */}
-      <Card className="bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-black">What If Analysis</CardTitle>
+          <CardTitle className="text-slate-100">What If Analysis</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Parameter Controls */}
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-black">Adjust Parameters</h3>
+              <h3 className="text-lg font-semibold text-slate-100">Adjust Parameters</h3>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <label className="text-sm font-medium text-black">pH Level</label>
-                    <span className="text-sm text-black/60">6.0 - 8.5</span>
+                    <label className="text-sm font-medium text-slate-100">pH Level</label>
+                    <span className="text-sm text-slate-400">6.0 - 8.5</span>
                   </div>
                   <input 
                     type="range" 
@@ -341,15 +341,15 @@ const WaterQualityClassification = () => {
                     className="w-full"
                     onChange={(e) => handleParameterChange('ph', e.target.value)}
                   />
-                  <div className="text-center text-sm font-medium text-black">
+                  <div className="text-center text-sm font-medium text-slate-100">
                     {simulatedParams.ph}
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <label className="text-sm font-medium text-black">Turbidity (NTU)</label>
-                    <span className="text-sm text-black/60">0 - 10</span>
+                    <label className="text-sm font-medium text-slate-100">Turbidity (NTU)</label>
+                    <span className="text-sm text-slate-400">0 - 10</span>
                   </div>
                   <input 
                     type="range" 
@@ -360,15 +360,15 @@ const WaterQualityClassification = () => {
                     className="w-full"
                     onChange={(e) => handleParameterChange('turbidity', e.target.value)}
                   />
-                  <div className="text-center text-sm font-medium text-black">
+                  <div className="text-center text-sm font-medium text-slate-100">
                     {simulatedParams.turbidity}
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <label className="text-sm font-medium text-black">TDS (ppm)</label>
-                    <span className="text-sm text-black/60">0 - 1000</span>
+                    <label className="text-sm font-medium text-slate-100">TDS (ppm)</label>
+                    <span className="text-sm text-slate-400">0 - 1000</span>
                   </div>
                   <input 
                     type="range" 
@@ -379,15 +379,15 @@ const WaterQualityClassification = () => {
                     className="w-full"
                     onChange={(e) => handleParameterChange('tds', e.target.value)}
                   />
-                  <div className="text-center text-sm font-medium text-black">
+                  <div className="text-center text-sm font-medium text-slate-100">
                     {simulatedParams.tds}
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <label className="text-sm font-medium text-black">Temperature (°C)</label>
-                    <span className="text-sm text-black/60">15 - 35</span>
+                    <label className="text-sm font-medium text-slate-100">Temperature (°C)</label>
+                    <span className="text-sm text-slate-400">15 - 35</span>
                   </div>
                   <input 
                     type="range" 
@@ -398,15 +398,15 @@ const WaterQualityClassification = () => {
                     className="w-full"
                     onChange={(e) => handleParameterChange('temperature', e.target.value)}
                   />
-                  <div className="text-center text-sm font-medium text-black">
+                  <div className="text-center text-sm font-medium text-slate-100">
                     {simulatedParams.temperature}
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <label className="text-sm font-medium text-black">Conductivity (μS/cm)</label>
-                    <span className="text-sm text-black/60">0 - 1500</span>
+                    <label className="text-sm font-medium text-slate-100">Conductivity (μS/cm)</label>
+                    <span className="text-sm text-slate-400">0 - 1500</span>
                   </div>
                   <input 
                     type="range" 
@@ -417,13 +417,13 @@ const WaterQualityClassification = () => {
                     className="w-full"
                     onChange={(e) => handleParameterChange('conductivity', e.target.value)}
                   />
-                  <div className="text-center text-sm font-medium text-black">
+                  <div className="text-center text-sm font-medium text-slate-100">
                     {simulatedParams.conductivity}
                   </div>
                 </div>
 
                 <button
-                  className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  className="w-full mt-4 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
                   onClick={simulateQuality}
                 >
                   Simulate Quality Grade
@@ -433,17 +433,17 @@ const WaterQualityClassification = () => {
 
             {/* Simulation Results */}
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-black">Simulation Results</h3>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-100">Simulation Results</h3>
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h3 className="text-2xl font-bold mb-2">Predicted Grade</h3>
+                    <h3 className="text-2xl font-bold mb-2 text-slate-100">Predicted Grade</h3>
                     <p className={`text-6xl font-bold ${getGradeColor(simulatedQuality?.grade)}`}>
                       {simulatedQuality?.grade || '-'}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg text-black/80">
+                    <p className="text-lg text-slate-100">
                       {simulatedQuality?.grade ? getGradeDescription(simulatedQuality.grade) : 'Adjust parameters to simulate'}
                     </p>
                   </div>
@@ -452,14 +452,14 @@ const WaterQualityClassification = () => {
                 {/* Grade Probabilities */}
                 {simulatedQuality && (
                   <div className="space-y-4">
-                    <h4 className="text-lg font-semibold">Predicted Probabilities</h4>
+                    <h4 className="text-lg font-semibold text-slate-100">Predicted Probabilities</h4>
                     <div className="grid grid-cols-4 gap-4">
                       {Object.entries(simulatedQuality.grade_probabilities || {}).map(([grade, probability]) => (
-                        <div key={grade} className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                        <div key={grade} className="bg-slate-700/50 backdrop-blur-sm rounded-lg p-4">
                           <div className={`text-2xl font-bold ${getGradeColor(grade)} mb-2`}>
                             {grade}
                           </div>
-                          <div className="text-lg">
+                          <div className="text-lg text-slate-100">
                             {(probability * 100).toFixed(1)}%
                           </div>
                         </div>
@@ -470,25 +470,25 @@ const WaterQualityClassification = () => {
 
                 {/* Parameter Analysis */}
                 <div className="space-y-4 mt-6">
-                  <h4 className="font-semibold text-black">Parameter Analysis</h4>
+                  <h4 className="font-semibold text-slate-100">Parameter Analysis</h4>
                   <div className="space-y-2">
                     {getParameterAnalysis(simulatedParams).map((analysis, index) => (
                       <div 
                         key={index}
                         className={`p-2 rounded-lg ${
-                          analysis.status === 'optimal' ? 'bg-green-100' :
-                          analysis.status === 'acceptable' ? 'bg-blue-100' :
-                          analysis.status === 'concerning' ? 'bg-yellow-100' :
-                          'bg-red-100'
+                          analysis.status === 'optimal' ? 'bg-slate-700/50 border border-green-500' :
+                          analysis.status === 'acceptable' ? 'bg-slate-700/50 border border-cyan-500' :
+                          analysis.status === 'concerning' ? 'bg-slate-700/50 border border-yellow-500' :
+                          'bg-slate-700/50 border border-red-500'
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-medium">{analysis.parameter}</span>
+                          <span className="font-medium text-slate-100">{analysis.parameter}</span>
                           <span className={
-                            analysis.status === 'optimal' ? 'text-green-600' :
-                            analysis.status === 'acceptable' ? 'text-blue-600' :
-                            analysis.status === 'concerning' ? 'text-yellow-600' :
-                            'text-red-600'
+                            analysis.status === 'optimal' ? 'text-green-400' :
+                            analysis.status === 'acceptable' ? 'text-cyan-400' :
+                            analysis.status === 'concerning' ? 'text-yellow-400' :
+                            'text-red-400'
                           }>
                             {analysis.message}
                           </span>
@@ -504,16 +504,16 @@ const WaterQualityClassification = () => {
       </Card>
 
       {/* Grade Criteria */}
-      <Card className="bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+      <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-black">Grade Criteria</CardTitle>
+          <CardTitle className="text-slate-100">Grade Criteria</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <h3 className="text-xl font-bold text-green-600 mb-2">Grade A - Excellent</h3>
-                <ul className="list-disc list-inside space-y-1 text-sm">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-xl font-bold text-green-400 mb-2">Grade A - Excellent</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm text-slate-100">
                   <li>pH: 6.8 - 7.5</li>
                   <li>Turbidity: {'<'} 1.0 NTU</li>
                   <li>TDS: {'<'} 300 ppm</li>
@@ -521,9 +521,9 @@ const WaterQualityClassification = () => {
                   <li>Conductivity: {'<'} 500 μS/cm</li>
                 </ul>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <h3 className="text-xl font-bold text-blue-600 mb-2">Grade B - Good</h3>
-                <ul className="list-disc list-inside space-y-1 text-sm">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-xl font-bold text-cyan-400 mb-2">Grade B - Good</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm text-slate-100">
                   <li>pH: 6.5 - 8.0</li>
                   <li>Turbidity: {'<'} 3.0 NTU</li>
                   <li>TDS: {'<'} 500 ppm</li>
@@ -533,9 +533,9 @@ const WaterQualityClassification = () => {
               </div>
             </div>
             <div className="space-y-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <h3 className="text-xl font-bold text-yellow-600 mb-2">Grade C - Fair</h3>
-                <ul className="list-disc list-inside space-y-1 text-sm">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-xl font-bold text-yellow-400 mb-2">Grade C - Fair</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm text-slate-100">
                   <li>pH: 6.0 - 8.5</li>
                   <li>Turbidity: {'<'} 5.0 NTU</li>
                   <li>TDS: {'<'} 800 ppm</li>
@@ -543,9 +543,9 @@ const WaterQualityClassification = () => {
                   <li>Conductivity: {'<'} 1000 μS/cm</li>
                 </ul>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <h3 className="text-xl font-bold text-red-600 mb-2">Grade D - Poor</h3>
-                <ul className="list-disc list-inside space-y-1 text-sm">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4">
+                <h3 className="text-xl font-bold text-red-400 mb-2">Grade D - Poor</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm text-slate-100">
                   <li>pH: Outside acceptable range</li>
                   <li>Turbidity: {'>='} 5.0 NTU</li>
                   <li>TDS: {'>='} 800 ppm</li>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, onValue, query, orderByChild, limitToLast, get } from 'firebase/database';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -135,6 +135,81 @@ const App = () => {
   const [predictions, setPredictions] = useState(null);
   const [activeTab, setActiveTab] = useState('realtime');
   const [error, setError] = useState(null);
+  const canvasRef = useRef(null);
+
+  // Particle effect
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    const particles = [];
+    const particleCount = 100;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.color = `rgba(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 55) + 200}, ${Math.random() * 0.5 + 0.2})`;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+      }
+
+      draw() {
+        if (!ctx) return;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+    }
+
+    function animate() {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (const particle of particles) {
+        particle.update();
+        particle.draw();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    const handleResize = () => {
+      if (!canvas) return;
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const sensorRef = ref(database, 'sensor_data');
@@ -221,9 +296,9 @@ const App = () => {
     };
 
     return (
-      <Card className="mb-8 bg-white/50 backdrop-blur-sm border border-black/20 rounded-lg">
+      <Card className="mb-8 bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>Real-time Sensor Data</CardTitle>
+          <CardTitle className="text-slate-100">Real-time Sensor Data</CardTitle>
         </CardHeader>
         <CardContent className="p-2 md:p-6">
           <DateTime latestData={latestData} />
@@ -332,13 +407,13 @@ const App = () => {
     };
 
     return (
-      <Card className="mb-8 bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+      <Card className="mb-8 bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
         <CardHeader>
           <div className="flex flex-row justify-between items-center">
-            <CardTitle>Historical Data</CardTitle>
+            <CardTitle className="text-slate-100">Historical Data</CardTitle>
             <button
               onClick={downloadData}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
             >
               Download Data
             </button>
@@ -346,9 +421,9 @@ const App = () => {
         </CardHeader>
         <CardContent className="p-2 md:p-6">
           <div className="overflow-x-auto">
-            <table className="min-w-full text-center border border-black/10 rounded-lg">
+            <table className="min-w-full text-center border border-slate-700/50 rounded-lg">
               <thead>
-                <tr className="bg-white/30 backdrop-blur-sm">
+                <tr className="bg-slate-800/50 backdrop-blur-sm">
                   <th className="p-2">Timestamp</th>
                   <th className="p-2">pH</th>
                   <th className="p-2">Turbidity (NTU)</th>
@@ -359,7 +434,7 @@ const App = () => {
               </thead>
               <tbody>
                 {sensorData.map((reading) => (
-                  <tr key={reading.id} className="border-b border-black/20">
+                  <tr key={reading.id} className="border-b border-slate-700/50">
                     <td className="p-2">{reading.timestamp}</td>
                     <td className="p-2">{reading.ph.toFixed(2)}</td>
                     <td className="p-2">{reading.turbidity.toFixed(2)}</td>
@@ -417,9 +492,9 @@ const App = () => {
 
     return (
       <>
-        <Card className="bg-white/50 backdrop-blur-sm border border-black/20 rounded-lg mb-8">
+        <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm rounded-lg mb-8">
           <CardHeader>
-            <CardTitle>Time Series Forecasting</CardTitle>
+            <CardTitle className="text-slate-100">Time Series Forecasting</CardTitle>
           </CardHeader>
           <CardContent className="p-2 md:p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -432,17 +507,17 @@ const App = () => {
                 <h3 className="text-lg font-semibold mb-4">pH Trends</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={realData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" />
                     <XAxis 
                       dataKey="timestamp" 
-                      tick={{ fontSize: 12, fill: "black" }}
+                      tick={{ fontSize: 12, fill: "#94a3b8" }}
                       angle={-45}
                       textAnchor="end"
-                      stroke="black"
+                      stroke="#94a3b8"
                     />
                     <YAxis 
-                      tick={{ fill: "black" }}
-                      stroke="black"
+                      tick={{ fill: "#94a3b8" }}
+                      stroke="#94a3b8"
                     />
                     <Tooltip 
                       contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
@@ -461,17 +536,17 @@ const App = () => {
                 <h3 className="text-lg font-semibold mb-4">pH Predictions</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={predictedData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" />
                     <XAxis 
                       dataKey="timestamp" 
-                      tick={{ fontSize: 12, fill: "black" }}
+                      tick={{ fontSize: 12, fill: "#94a3b8" }}
                       angle={-45}
                       textAnchor="end"
-                      stroke="black"
+                      stroke="#94a3b8"
                     />
                     <YAxis 
-                      tick={{ fill: "black" }}
-                      stroke="black"
+                      tick={{ fill: "#94a3b8" }}
+                      stroke="#94a3b8"
                     />
                     <Tooltip 
                       contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
@@ -492,17 +567,17 @@ const App = () => {
                 <h3 className="text-lg font-semibold mb-4">Temperature Trends</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={realData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" />
                     <XAxis 
                       dataKey="timestamp" 
-                      tick={{ fontSize: 12, fill: "black" }}
+                      tick={{ fontSize: 12, fill: "#94a3b8" }}
                       angle={-45}
                       textAnchor="end"
-                      stroke="black"
+                      stroke="#94a3b8"
                     />
                     <YAxis 
-                      tick={{ fill: "black" }}
-                      stroke="black"
+                      tick={{ fill: "#94a3b8" }}
+                      stroke="#94a3b8"
                     />
                     <Tooltip 
                       contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
@@ -521,17 +596,17 @@ const App = () => {
                 <h3 className="text-lg font-semibold mb-4">Temperature Predictions</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={predictedData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" />
                     <XAxis 
                       dataKey="timestamp" 
-                      tick={{ fontSize: 12, fill: "black" }}
+                      tick={{ fontSize: 12, fill: "#94a3b8" }}
                       angle={-45}
                       textAnchor="end"
-                      stroke="black"
+                      stroke="#94a3b8"
                     />
                     <YAxis 
-                      tick={{ fill: "black" }}
-                      stroke="black"
+                      tick={{ fill: "#94a3b8" }}
+                      stroke="#94a3b8"
                     />
                     <Tooltip 
                       contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
@@ -552,17 +627,17 @@ const App = () => {
                 <h3 className="text-lg font-semibold mb-4">TDS Trends</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={realData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" />
                     <XAxis 
                       dataKey="timestamp" 
-                      tick={{ fontSize: 12, fill: "black" }}
+                      tick={{ fontSize: 12, fill: "#94a3b8" }}
                       angle={-45}
                       textAnchor="end"
-                      stroke="black"
+                      stroke="#94a3b8"
                     />
                     <YAxis 
-                      tick={{ fill: "black" }}
-                      stroke="black"
+                      tick={{ fill: "#94a3b8" }}
+                      stroke="#94a3b8"
                     />
                     <Tooltip 
                       contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
@@ -581,17 +656,17 @@ const App = () => {
                 <h3 className="text-lg font-semibold mb-4">TDS Predictions</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={predictedData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" />
                     <XAxis 
                       dataKey="timestamp" 
-                      tick={{ fontSize: 12, fill: "black" }}
+                      tick={{ fontSize: 12, fill: "#94a3b8" }}
                       angle={-45}
                       textAnchor="end"
-                      stroke="black"
+                      stroke="#94a3b8"
                     />
                     <YAxis 
-                      tick={{ fill: "black" }}
-                      stroke="black"
+                      tick={{ fill: "#94a3b8" }}
+                      stroke="#94a3b8"
                     />
                     <Tooltip 
                       contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
@@ -612,17 +687,17 @@ const App = () => {
                 <h3 className="text-lg font-semibold mb-4">Turbidity Trends</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={realData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" />
                     <XAxis 
                       dataKey="timestamp" 
-                      tick={{ fontSize: 12, fill: "black" }}
+                      tick={{ fontSize: 12, fill: "#94a3b8" }}
                       angle={-45}
                       textAnchor="end"
-                      stroke="black"
+                      stroke="#94a3b8"
                     />
                     <YAxis 
-                      tick={{ fill: "black" }}
-                      stroke="black"
+                      tick={{ fill: "#94a3b8" }}
+                      stroke="#94a3b8"
                     />
                     <Tooltip 
                       contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
@@ -641,17 +716,17 @@ const App = () => {
                 <h3 className="text-lg font-semibold mb-4">Turbidity Predictions</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={predictedData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" />
                     <XAxis 
                       dataKey="timestamp" 
-                      tick={{ fontSize: 12, fill: "black" }}
+                      tick={{ fontSize: 12, fill: "#94a3b8" }}
                       angle={-45}
                       textAnchor="end"
-                      stroke="black"
+                      stroke="#94a3b8"
                     />
                     <YAxis 
-                      tick={{ fill: "black" }}
-                      stroke="black"
+                      tick={{ fill: "#94a3b8" }}
+                      stroke="#94a3b8"
                     />
                     <Tooltip 
                       contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
@@ -672,17 +747,17 @@ const App = () => {
                 <h3 className="text-lg font-semibold mb-4">Conductivity Trends</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={realData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" />
                     <XAxis 
                       dataKey="timestamp" 
-                      tick={{ fontSize: 12, fill: "black" }}
+                      tick={{ fontSize: 12, fill: "#94a3b8" }}
                       angle={-45}
                       textAnchor="end"
-                      stroke="black"
+                      stroke="#94a3b8"
                     />
                     <YAxis 
-                      tick={{ fill: "black" }}
-                      stroke="black"
+                      tick={{ fill: "#94a3b8" }}
+                      stroke="#94a3b8"
                     />
                     <Tooltip 
                       contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
@@ -701,17 +776,17 @@ const App = () => {
                 <h3 className="text-lg font-semibold mb-4">Conductivity Predictions</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={predictedData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" />
                     <XAxis 
                       dataKey="timestamp" 
-                      tick={{ fontSize: 12, fill: "black" }}
+                      tick={{ fontSize: 12, fill: "#94a3b8" }}
                       angle={-45}
                       textAnchor="end"
-                      stroke="black"
+                      stroke="#94a3b8"
                     />
                     <YAxis 
-                      tick={{ fill: "black" }}
-                      stroke="black"
+                      tick={{ fill: "#94a3b8" }}
+                      stroke="#94a3b8"
                     />
                     <Tooltip 
                       contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
@@ -730,38 +805,38 @@ const App = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+        <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-black">Model Information</CardTitle>
+            <CardTitle className="text-slate-100">Model Information</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* LSTM Architecture */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-black mb-4">LSTM Architecture</h3>
-                <div className="flex flex-col items-center justify-center gap-4">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-slate-100 mb-4">LSTM Architecture</h3>
+                <div className="flex flex-col items-center justify-center gap-4 min-h-[200px]">
                   <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-                    <div className="flex flex-col items-center">
-                      <div className="w-20 h-20 bg-indigo-100 rounded-lg flex items-center justify-center border-2 border-indigo-500">
-                        <span className="text-xs text-black text-center">Input Layer<br/>(10 timesteps,<br/>5 features)</span>
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
+                        <span className="text-xs text-slate-100 text-center">Input Layer<br/>(10 timesteps,<br/>5 features)</span>
                       </div>
                     </div>
-                    <div className="hidden md:block text-2xl text-black">→</div>
-                    <div className="flex flex-col items-center">
-                      <div className="w-20 h-20 bg-purple-100 rounded-lg flex items-center justify-center border-2 border-purple-500">
-                        <span className="text-xs text-black text-center">LSTM Layer<br/>(50 units)</span>
+                    <div className="hidden md:flex items-center justify-center text-2xl text-slate-100">→</div>
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
+                        <span className="text-xs text-slate-100 text-center">LSTM Layer<br/>(50 units)</span>
                       </div>
                     </div>
-                    <div className="hidden md:block text-2xl text-black">→</div>
-                    <div className="flex flex-col items-center">
-                      <div className="w-20 h-20 bg-blue-100 rounded-lg flex items-center justify-center border-2 border-blue-500">
-                        <span className="text-xs text-black text-center">Dense Layer<br/>(25 units)</span>
+                    <div className="hidden md:flex items-center justify-center text-2xl text-slate-100">→</div>
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
+                        <span className="text-xs text-slate-100 text-center">Dense Layer<br/>(25 units)</span>
                       </div>
                     </div>
-                    <div className="hidden md:block text-2xl text-black">→</div>
-                    <div className="flex flex-col items-center">
-                      <div className="w-20 h-20 bg-green-100 rounded-lg flex items-center justify-center border-2 border-green-500">
-                        <span className="text-xs text-black text-center">Output Layer<br/>(5 features)</span>
+                    <div className="hidden md:flex items-center justify-center text-2xl text-slate-100">→</div>
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
+                        <span className="text-xs text-slate-100 text-center">Output Layer<br/>(5 features)</span>
                       </div>
                     </div>
                   </div>
@@ -769,23 +844,23 @@ const App = () => {
               </div>
 
               {/* Forecasting Process */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-black mb-4">Forecasting Process</h3>
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-slate-100 mb-4">Forecasting Process</h3>
                 <div className="flex flex-col items-center space-y-4">
-                  <div className="w-full bg-blue-100 rounded-lg border-2 border-blue-500 p-4">
-                    <p className="text-xs text-center text-black">
+                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                    <p className="text-xs text-center text-slate-100">
                       1. Input Sequence (10 timesteps)
                     </p>
                   </div>
-                  <div className="w-0.5 h-4 bg-blue-500"></div>
-                  <div className="w-full bg-purple-100 rounded-lg border-2 border-purple-500 p-4">
-                    <p className="text-xs text-center text-black">
+                  <div className="w-0.5 h-4 bg-cyan-500"></div>
+                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                    <p className="text-xs text-center text-slate-100">
                       2. Feature Scaling & Normalization
                     </p>
                   </div>
-                  <div className="w-0.5 h-4 bg-purple-500"></div>
-                  <div className="w-full bg-green-100 rounded-lg border-2 border-green-500 p-4">
-                    <p className="text-xs text-center text-black">
+                  <div className="w-0.5 h-4 bg-cyan-500"></div>
+                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                    <p className="text-xs text-center text-slate-100">
                       3. Generate 24-hour Predictions
                     </p>
                   </div>
@@ -793,20 +868,20 @@ const App = () => {
               </div>
 
               {/* Model Performance */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-black mb-4">Model Performance</h3>
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-slate-100 mb-4">Model Performance</h3>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-sm font-medium text-black mb-2">Training Metrics</h4>
-                    <ul className="list-disc list-inside text-sm text-black/80">
+                    <h4 className="text-sm font-medium text-slate-100 mb-2">Training Metrics</h4>
+                    <ul className="list-disc list-inside text-sm text-slate-400">
                       <li>Mean Squared Error: 0.0432</li>
                       <li>Root Mean Squared Error: 0.208</li>
                       <li>Mean Absolute Error: 0.187</li>
                     </ul>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-black mb-2">Model Capabilities</h4>
-                    <ul className="list-disc list-inside text-sm text-black/80">
+                    <h4 className="text-sm font-medium text-slate-100 mb-2">Model Capabilities</h4>
+                    <ul className="list-disc list-inside text-sm text-slate-400">
                       <li>24-hour ahead predictions</li>
                       <li>Multi-parameter forecasting</li>
                       <li>Real-time updates</li>
@@ -816,51 +891,51 @@ const App = () => {
               </div>
 
               {/* Feature Analysis */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-black mb-4">Feature Analysis</h3>
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-slate-100 mb-4">Feature Analysis</h3>
                 <div className="space-y-3">
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-black">pH Level</span>
-                      <span className="text-sm text-black">92%</span>
+                      <span className="text-sm font-medium text-slate-100">pH Level</span>
+                      <span className="text-sm text-slate-400">92%</span>
                     </div>
-                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
                       <div className="h-full bg-blue-600 rounded-full" style={{ width: '92%' }}></div>
                     </div>
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-black">Temperature</span>
-                      <span className="text-sm text-black">88%</span>
+                      <span className="text-sm font-medium text-slate-100">Temperature</span>
+                      <span className="text-sm text-slate-400">88%</span>
                     </div>
-                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
                       <div className="h-full bg-blue-600 rounded-full" style={{ width: '88%' }}></div>
                     </div>
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-black">TDS</span>
-                      <span className="text-sm text-black">85%</span>
+                      <span className="text-sm font-medium text-slate-100">TDS</span>
+                      <span className="text-sm text-slate-400">85%</span>
                     </div>
-                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
                       <div className="h-full bg-blue-600 rounded-full" style={{ width: '85%' }}></div>
                     </div>
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-black">Conductivity</span>
-                      <span className="text-sm text-black">82%</span>
+                      <span className="text-sm font-medium text-slate-100">Conductivity</span>
+                      <span className="text-sm text-slate-400">82%</span>
                     </div>
-                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
                       <div className="h-full bg-blue-600 rounded-full" style={{ width: '82%' }}></div>
                     </div>
                   </div>
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-black">Turbidity</span>
-                      <span className="text-sm text-black">78%</span>
+                      <span className="text-sm font-medium text-slate-100">Turbidity</span>
+                      <span className="text-sm text-slate-400">78%</span>
                     </div>
-                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
                       <div className="h-full bg-blue-600 rounded-full" style={{ width: '78%' }}></div>
                     </div>
                   </div>
@@ -874,15 +949,15 @@ const App = () => {
   };
 
   const Footer = () => (
-    <footer className="bg-white/50 backdrop-blur-sm shadow-lg mt-8 py-8 border-black rounded-lg">
+    <footer className="bg-slate-900/50 backdrop-blur-sm shadow-lg mt-8 py-8 border border-slate-700/50 rounded-lg">
       <div className="container mx-auto px-4">
         <div className="text-center">
-          <h3 className="text-lg font-semibold mb-4">Created By</h3>
-          <p className="text-sm md:text-base text-black-600 mb-4">
+          <h3 className="text-lg font-semibold mb-4 text-slate-100">Created By</h3>
+          <p className="text-sm md:text-base text-slate-400 mb-4">
             Nitish Gogoi, Abhijit Das, Arnall Saikia, Rajarshi Dutta
           </p>
-          <h3 className="text-lg font-semibold mb-4">Under the Guidance of</h3>
-          <p className="text-sm md:text-base text-black-600">
+          <h3 className="text-lg font-semibold mb-4 text-slate-100">Under the Guidance of</h3>
+          <p className="text-sm md:text-base text-slate-400">
             Prof. Dinesh Shankar Pegu
           </p>
         </div>
@@ -903,7 +978,7 @@ const App = () => {
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg shadow">
+        <div className="p-4 bg-slate-800/50 backdrop-blur-sm rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Date</h3>
           <p className="text-2xl">
             {currentDateTime.toLocaleDateString('en-US', {
@@ -914,7 +989,7 @@ const App = () => {
             })}
           </p>
         </div>
-        <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg shadow">
+        <div className="p-4 bg-slate-800/50 backdrop-blur-sm rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Time</h3>
           <p className="text-2xl">
             {currentDateTime.toLocaleTimeString('en-US', {
@@ -924,7 +999,7 @@ const App = () => {
             })}
           </p>
         </div>
-        <div className="p-4 bg-white/10 backdrop-blur-sm rounded-lg shadow">
+        <div className="p-4 bg-slate-800/50 backdrop-blur-sm rounded-lg shadow">
           <h3 className="text-lg font-semibold mb-2">Last Updated</h3>
           <p className="text-2xl">
             {latestData ? (
@@ -949,23 +1024,21 @@ const App = () => {
   };
 
   return (
-    <div 
-      className="min-h-screen bg-cover bg-center bg-fixed"
-      style={{
-        backgroundImage: 'url("/lake.jpg")',
-      }}
-    >
-      <div className="container mx-auto p-4 backdrop-blur-sm bg-white/0">
-        <h1 className="text-3xl md:text-6xl font-['Bebas_Neue'] mb-4 md:mb-8 text-white tracking-wider font-bold">Water Quality Monitoring Dashboard</h1>
+    <div className="min-h-screen bg-gradient-to-br from-black to-slate-900 text-slate-100 relative overflow-hidden">
+      {/* Background particle effect */}
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-30" />
+
+      <div className="container mx-auto p-4 relative z-10">
+        <h1 className="text-3xl md:text-6xl font-['Bebas_Neue'] mb-4 md:mb-8 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 tracking-wider font-bold">Water Quality Monitoring Dashboard</h1>
         
-        <nav className="bg-white/50 backdrop-blur-sm shadow-lg mb-8 border-black rounded-lg overflow-x-auto">
+        <nav className="bg-slate-900/50 backdrop-blur-sm shadow-lg mb-8 border border-slate-700/50 rounded-lg overflow-x-auto">
           <div className="container mx-auto px-2 md:px-4">
             <div className="flex space-x-2 md:space-x-4">
               <button
                 className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
                   activeTab === 'realtime' 
-                    ? 'text-blue-600 border-b-2 border-blue-600' 
-                    : 'text-black-500 hover:text-blue-600'
+                    ? 'text-cyan-400 border-b-2 border-cyan-500' 
+                    : 'text-slate-400 hover:text-slate-100'
                 }`}
                 onClick={() => setActiveTab('realtime')}
               >
@@ -974,8 +1047,8 @@ const App = () => {
               <button
                 className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
                   activeTab === 'table' 
-                    ? 'text-blue-600 border-b-2 border-blue-600' 
-                    : 'text-black-500 hover:text-blue-600'
+                    ? 'text-cyan-400 border-b-2 border-cyan-500' 
+                    : 'text-slate-400 hover:text-slate-100'
                 }`}
                 onClick={() => setActiveTab('table')}
               >
@@ -984,8 +1057,8 @@ const App = () => {
               <button
                 className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
                   activeTab === 'visualizations' 
-                    ? 'text-blue-600 border-b-2 border-blue-600' 
-                    : 'text-black-500 hover:text-blue-600'
+                    ? 'text-cyan-400 border-b-2 border-cyan-500' 
+                    : 'text-slate-400 hover:text-slate-100'
                 }`}
                 onClick={() => setActiveTab('visualizations')}
               >
@@ -994,8 +1067,8 @@ const App = () => {
               <button
                 className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
                   activeTab === 'corrosion' 
-                    ? 'text-blue-600 border-b-2 border-blue-600' 
-                    : 'text-black-500 hover:text-blue-600'
+                    ? 'text-cyan-400 border-b-2 border-cyan-500' 
+                    : 'text-slate-400 hover:text-slate-100'
                 }`}
                 onClick={() => setActiveTab('corrosion')}
               >
@@ -1004,8 +1077,8 @@ const App = () => {
               <button
                 className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
                   activeTab === 'quality' 
-                    ? 'text-blue-600 border-b-2 border-blue-600' 
-                    : 'text-black-500 hover:text-blue-600'
+                    ? 'text-cyan-400 border-b-2 border-cyan-500' 
+                    : 'text-slate-400 hover:text-slate-100'
                 }`}
                 onClick={() => setActiveTab('quality')}
               >
