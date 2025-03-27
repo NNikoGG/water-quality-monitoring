@@ -5,6 +5,14 @@ const WaterQualityClassification = () => {
   const [qualityData, setQualityData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [simulatedParams, setSimulatedParams] = useState({
+    ph: 7,
+    turbidity: 1,
+    tds: 300,
+    temperature: 27,
+    conductivity: 500
+  });
+  const [simulatedQuality, setSimulatedQuality] = useState(null);
 
   const fetchQualityData = async () => {
     try {
@@ -58,6 +66,77 @@ const WaterQualityClassification = () => {
       default:
         return 'Unknown Quality';
     }
+  };
+
+  const handleParameterChange = (parameter, value) => {
+    setSimulatedParams(prevParams => ({
+      ...prevParams,
+      [parameter]: parseFloat(value)
+    }));
+  };
+
+  const simulateQuality = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/simulate-quality', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...simulatedParams,
+          timestamp: new Date().toISOString()
+        })
+      });
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      setSimulatedQuality(data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const getParameterAnalysis = (params) => {
+    const analysis = [];
+    if (params.ph < 6.8 || params.ph > 7.5) {
+      analysis.push({
+        parameter: 'pH',
+        message: params.ph < 6.8 ? 'Below acceptable range' : 'Above acceptable range',
+        status: params.ph < 6.8 || params.ph > 7.5 ? 'concerning' : 'acceptable'
+      });
+    }
+    if (params.turbidity > 1.0) {
+      analysis.push({
+        parameter: 'Turbidity',
+        message: 'Above acceptable range',
+        status: 'concerning'
+      });
+    }
+    if (params.tds > 300) {
+      analysis.push({
+        parameter: 'TDS',
+        message: 'Above acceptable range',
+        status: 'concerning'
+      });
+    }
+    if (params.temperature < 25 || params.temperature > 28) {
+      analysis.push({
+        parameter: 'Temperature',
+        message: params.temperature < 25 ? 'Below acceptable range' : 'Above acceptable range',
+        status: params.temperature < 25 || params.temperature > 28 ? 'concerning' : 'acceptable'
+      });
+    }
+    if (params.conductivity > 500) {
+      analysis.push({
+        parameter: 'Conductivity',
+        message: 'Above acceptable range',
+        status: 'concerning'
+      });
+    }
+    return analysis;
   };
 
   if (loading) {
@@ -229,6 +308,193 @@ const WaterQualityClassification = () => {
                       <span className="text-xs text-black">Max Depth:</span>
                       <span className="text-xs text-black">10</span>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* What If Analysis */}
+      <Card className="bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="text-black">What If Analysis</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Parameter Controls */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-black">Adjust Parameters</h3>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <label className="text-sm font-medium text-black">pH Level</label>
+                    <span className="text-sm text-black/60">6.0 - 8.5</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="14" 
+                    step="0.1"
+                    defaultValue="7"
+                    className="w-full"
+                    onChange={(e) => handleParameterChange('ph', e.target.value)}
+                  />
+                  <div className="text-center text-sm font-medium text-black">
+                    {simulatedParams.ph}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <label className="text-sm font-medium text-black">Turbidity (NTU)</label>
+                    <span className="text-sm text-black/60">0 - 10</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="10" 
+                    step="0.1"
+                    defaultValue="1"
+                    className="w-full"
+                    onChange={(e) => handleParameterChange('turbidity', e.target.value)}
+                  />
+                  <div className="text-center text-sm font-medium text-black">
+                    {simulatedParams.turbidity}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <label className="text-sm font-medium text-black">TDS (ppm)</label>
+                    <span className="text-sm text-black/60">0 - 1000</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="1000" 
+                    step="10"
+                    defaultValue="300"
+                    className="w-full"
+                    onChange={(e) => handleParameterChange('tds', e.target.value)}
+                  />
+                  <div className="text-center text-sm font-medium text-black">
+                    {simulatedParams.tds}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <label className="text-sm font-medium text-black">Temperature (°C)</label>
+                    <span className="text-sm text-black/60">15 - 35</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    step="0.1"
+                    defaultValue="27"
+                    className="w-full"
+                    onChange={(e) => handleParameterChange('temperature', e.target.value)}
+                  />
+                  <div className="text-center text-sm font-medium text-black">
+                    {simulatedParams.temperature}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <label className="text-sm font-medium text-black">Conductivity (μS/cm)</label>
+                    <span className="text-sm text-black/60">0 - 1500</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="1500" 
+                    step="10"
+                    defaultValue="500"
+                    className="w-full"
+                    onChange={(e) => handleParameterChange('conductivity', e.target.value)}
+                  />
+                  <div className="text-center text-sm font-medium text-black">
+                    {simulatedParams.conductivity}
+                  </div>
+                </div>
+
+                <button
+                  className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  onClick={simulateQuality}
+                >
+                  Simulate Quality Grade
+                </button>
+              </div>
+            </div>
+
+            {/* Simulation Results */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-black">Simulation Results</h3>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h3 className="text-2xl font-bold mb-2">Predicted Grade</h3>
+                    <p className={`text-6xl font-bold ${getGradeColor(simulatedQuality?.grade)}`}>
+                      {simulatedQuality?.grade || '-'}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg text-black/80">
+                      {simulatedQuality?.grade ? getGradeDescription(simulatedQuality.grade) : 'Adjust parameters to simulate'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Grade Probabilities */}
+                {simulatedQuality && (
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold">Predicted Probabilities</h4>
+                    <div className="grid grid-cols-4 gap-4">
+                      {Object.entries(simulatedQuality.grade_probabilities || {}).map(([grade, probability]) => (
+                        <div key={grade} className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                          <div className={`text-2xl font-bold ${getGradeColor(grade)} mb-2`}>
+                            {grade}
+                          </div>
+                          <div className="text-lg">
+                            {(probability * 100).toFixed(1)}%
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Parameter Analysis */}
+                <div className="space-y-4 mt-6">
+                  <h4 className="font-semibold text-black">Parameter Analysis</h4>
+                  <div className="space-y-2">
+                    {getParameterAnalysis(simulatedParams).map((analysis, index) => (
+                      <div 
+                        key={index}
+                        className={`p-2 rounded-lg ${
+                          analysis.status === 'optimal' ? 'bg-green-100' :
+                          analysis.status === 'acceptable' ? 'bg-blue-100' :
+                          analysis.status === 'concerning' ? 'bg-yellow-100' :
+                          'bg-red-100'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">{analysis.parameter}</span>
+                          <span className={
+                            analysis.status === 'optimal' ? 'text-green-600' :
+                            analysis.status === 'acceptable' ? 'text-blue-600' :
+                            analysis.status === 'concerning' ? 'text-yellow-600' :
+                            'text-red-600'
+                          }>
+                            {analysis.message}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>

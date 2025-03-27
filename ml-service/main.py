@@ -299,3 +299,28 @@ async def predict_quality():
         print(f"\nError in predict_quality: {str(e)}")
         return {"error": str(e)}
 
+@app.post("/simulate-corrosion")
+async def simulate_corrosion(readings: List[SensorReading]):
+    try:
+        # Convert readings to DataFrame
+        sequence = pd.DataFrame([reading.dict() for reading in readings])
+        
+        # Make prediction
+        prediction = corrosion_model.predict(sequence)
+        
+        return prediction
+    except Exception as e:
+        print(f"\nError in simulate_corrosion: {str(e)}")
+        return {"error": str(e)}
+
+@app.post("/simulate-quality")
+async def simulate_quality(reading: SensorReading):
+    try:
+        # Make prediction using the classifier
+        prediction = quality_classifier.predict(reading.dict())
+        
+        return prediction
+    except Exception as e:
+        print(f"\nError in simulate_quality: {str(e)}")
+        return {"error": str(e)}
+
