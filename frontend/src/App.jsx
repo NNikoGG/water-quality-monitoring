@@ -134,6 +134,7 @@ const App = () => {
   const [latestData, setLatestData] = useState(null);
   const [predictions, setPredictions] = useState(null);
   const [activeTab, setActiveTab] = useState('realtime');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const sensorRef = ref(database, 'sensor_data');
@@ -158,17 +159,24 @@ const App = () => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const fetchPredictions = async () => {
-      try {
-        const response = await fetch('https://water-quality-ml-service.onrender.com/predict'); 
-        const data = await response.json();
-        setPredictions(data);
-      } catch (error) {
-        console.error('Error fetching predictions:', error);
+  const fetchPredictions = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/predict');
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
       }
-    };
+      
+      setPredictions(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching predictions:', err);
+      setError('Failed to fetch predictions. Please try again later.');
+    }
+  };
 
+  useEffect(() => {
     if (sensorData.length > 0) {
       fetchPredictions();
     }
@@ -369,6 +377,22 @@ const App = () => {
   };
 
   const DataVisualizations = () => {
+    if (error) {
+      return (
+        <div className="flex justify-center items-center min-h-[400px]">
+          <p className="text-red-600 font-semibold">{error}</p>
+        </div>
+      );
+    }
+
+    if (!predictions) {
+      return (
+        <div className="flex justify-center items-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+        </div>
+      );
+    }
+
     // Clean data before combining
     const cleanPredictions = predictions ? {
         ...predictions,
@@ -392,318 +416,460 @@ const App = () => {
     })).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)) : [];
 
     return (
-      <Card className="bg-white/50 backdrop-blur-sm border border-black/20 rounded-lg">
-        <CardHeader>
-          <CardTitle>Data Visualizations</CardTitle>
-        </CardHeader>
-        <CardContent className="p-2 md:p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Column Headers */}
-            <h2 className="hidden md:block text-xl font-bold mb-6 md:col-span-1">Real-time Data</h2>
-            <h2 className="hidden md:block text-xl font-bold mb-6 md:col-span-1">Predicted Data</h2>
+      <>
+        <Card className="bg-white/50 backdrop-blur-sm border border-black/20 rounded-lg mb-8">
+          <CardHeader>
+            <CardTitle>Time Series Forecasting</CardTitle>
+          </CardHeader>
+          <CardContent className="p-2 md:p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Column Headers */}
+              <h2 className="hidden md:block text-xl font-bold mb-6 md:col-span-1">Real-time Data</h2>
+              <h2 className="hidden md:block text-xl font-bold mb-6 md:col-span-1">Predicted Data</h2>
 
-            {/* pH Charts */}
-            <div className="h-[250px] md:h-[300px]">
-              <h3 className="text-lg font-semibold mb-4">pH Trends</h3>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={realData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tick={{ fontSize: 12, fill: "black" }}
-                    angle={-45}
-                    textAnchor="end"
-                    stroke="black"
-                  />
-                  <YAxis 
-                    tick={{ fill: "black" }}
-                    stroke="black"
-                  />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="ph" 
-                    stroke="#4338ca"
-                    strokeWidth={3}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="h-[250px] md:h-[300px]">
-              <h3 className="text-lg font-semibold mb-4">pH Predictions</h3>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={predictedData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tick={{ fontSize: 12, fill: "black" }}
-                    angle={-45}
-                    textAnchor="end"
-                    stroke="black"
-                  />
-                  <YAxis 
-                    tick={{ fill: "black" }}
-                    stroke="black"
-                  />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="ph" 
-                    stroke="#ff0000"
-                    strokeWidth={2}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+              {/* pH Charts */}
+              <div className="h-[250px] md:h-[300px]">
+                <h3 className="text-lg font-semibold mb-4">pH Trends</h3>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={realData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <XAxis 
+                      dataKey="timestamp" 
+                      tick={{ fontSize: 12, fill: "black" }}
+                      angle={-45}
+                      textAnchor="end"
+                      stroke="black"
+                    />
+                    <YAxis 
+                      tick={{ fill: "black" }}
+                      stroke="black"
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="ph" 
+                      stroke="#4338ca"
+                      strokeWidth={3}
+                      connectNulls
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="h-[250px] md:h-[300px]">
+                <h3 className="text-lg font-semibold mb-4">pH Predictions</h3>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={predictedData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <XAxis 
+                      dataKey="timestamp" 
+                      tick={{ fontSize: 12, fill: "black" }}
+                      angle={-45}
+                      textAnchor="end"
+                      stroke="black"
+                    />
+                    <YAxis 
+                      tick={{ fill: "black" }}
+                      stroke="black"
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="ph" 
+                      stroke="#ff0000"
+                      strokeWidth={2}
+                      connectNulls
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
 
-            {/* Temperature Charts */}
-            <div className="h-[250px] md:h-[300px]">
-              <h3 className="text-lg font-semibold mb-4">Temperature Trends</h3>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={realData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tick={{ fontSize: 12, fill: "black" }}
-                    angle={-45}
-                    textAnchor="end"
-                    stroke="black"
-                  />
-                  <YAxis 
-                    tick={{ fill: "black" }}
-                    stroke="black"
-                  />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="temperature" 
-                    stroke="#15803d"
-                    strokeWidth={3}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="h-[250px] md:h-[300px]">
-              <h3 className="text-lg font-semibold mb-4">Temperature Predictions</h3>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={predictedData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tick={{ fontSize: 12, fill: "black" }}
-                    angle={-45}
-                    textAnchor="end"
-                    stroke="black"
-                  />
-                  <YAxis 
-                    tick={{ fill: "black" }}
-                    stroke="black"
-                  />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="temperature" 
-                    stroke="#ff0000"
-                    strokeWidth={2}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+              {/* Temperature Charts */}
+              <div className="h-[250px] md:h-[300px]">
+                <h3 className="text-lg font-semibold mb-4">Temperature Trends</h3>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={realData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <XAxis 
+                      dataKey="timestamp" 
+                      tick={{ fontSize: 12, fill: "black" }}
+                      angle={-45}
+                      textAnchor="end"
+                      stroke="black"
+                    />
+                    <YAxis 
+                      tick={{ fill: "black" }}
+                      stroke="black"
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="temperature" 
+                      stroke="#15803d"
+                      strokeWidth={3}
+                      connectNulls
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="h-[250px] md:h-[300px]">
+                <h3 className="text-lg font-semibold mb-4">Temperature Predictions</h3>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={predictedData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <XAxis 
+                      dataKey="timestamp" 
+                      tick={{ fontSize: 12, fill: "black" }}
+                      angle={-45}
+                      textAnchor="end"
+                      stroke="black"
+                    />
+                    <YAxis 
+                      tick={{ fill: "black" }}
+                      stroke="black"
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="temperature" 
+                      stroke="#ff0000"
+                      strokeWidth={2}
+                      connectNulls
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
 
-            {/* TDS Charts */}
-            <div className="h-[250px] md:h-[300px]">
-              <h3 className="text-lg font-semibold mb-4">TDS Trends</h3>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={realData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tick={{ fontSize: 12, fill: "black" }}
-                    angle={-45}
-                    textAnchor="end"
-                    stroke="black"
-                  />
-                  <YAxis 
-                    tick={{ fill: "black" }}
-                    stroke="black"
-                  />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="tds" 
-                    stroke="#ffc658"
-                    strokeWidth={3}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="h-[250px] md:h-[300px]">
-              <h3 className="text-lg font-semibold mb-4">TDS Predictions</h3>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={predictedData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tick={{ fontSize: 12, fill: "black" }}
-                    angle={-45}
-                    textAnchor="end"
-                    stroke="black"
-                  />
-                  <YAxis 
-                    tick={{ fill: "black" }}
-                    stroke="black"
-                  />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="tds" 
-                    stroke="#ff0000"
-                    strokeWidth={2}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+              {/* TDS Charts */}
+              <div className="h-[250px] md:h-[300px]">
+                <h3 className="text-lg font-semibold mb-4">TDS Trends</h3>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={realData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <XAxis 
+                      dataKey="timestamp" 
+                      tick={{ fontSize: 12, fill: "black" }}
+                      angle={-45}
+                      textAnchor="end"
+                      stroke="black"
+                    />
+                    <YAxis 
+                      tick={{ fill: "black" }}
+                      stroke="black"
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="tds" 
+                      stroke="#ffc658"
+                      strokeWidth={3}
+                      connectNulls
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="h-[250px] md:h-[300px]">
+                <h3 className="text-lg font-semibold mb-4">TDS Predictions</h3>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={predictedData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <XAxis 
+                      dataKey="timestamp" 
+                      tick={{ fontSize: 12, fill: "black" }}
+                      angle={-45}
+                      textAnchor="end"
+                      stroke="black"
+                    />
+                    <YAxis 
+                      tick={{ fill: "black" }}
+                      stroke="black"
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="tds" 
+                      stroke="#ff0000"
+                      strokeWidth={2}
+                      connectNulls
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
 
-            {/* Turbidity Charts */}
-            <div className="h-[250px] md:h-[300px]">
-              <h3 className="text-lg font-semibold mb-4">Turbidity Trends</h3>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={realData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tick={{ fontSize: 12, fill: "black" }}
-                    angle={-45}
-                    textAnchor="end"
-                    stroke="black"
-                  />
-                  <YAxis 
-                    tick={{ fill: "black" }}
-                    stroke="black"
-                  />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="turbidity" 
-                    stroke="#ff7300"
-                    strokeWidth={3}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="h-[250px] md:h-[300px]">
-              <h3 className="text-lg font-semibold mb-4">Turbidity Predictions</h3>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={predictedData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tick={{ fontSize: 12, fill: "black" }}
-                    angle={-45}
-                    textAnchor="end"
-                    stroke="black"
-                  />
-                  <YAxis 
-                    tick={{ fill: "black" }}
-                    stroke="black"
-                  />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="turbidity" 
-                    stroke="#ff0000"
-                    strokeWidth={2}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+              {/* Turbidity Charts */}
+              <div className="h-[250px] md:h-[300px]">
+                <h3 className="text-lg font-semibold mb-4">Turbidity Trends</h3>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={realData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <XAxis 
+                      dataKey="timestamp" 
+                      tick={{ fontSize: 12, fill: "black" }}
+                      angle={-45}
+                      textAnchor="end"
+                      stroke="black"
+                    />
+                    <YAxis 
+                      tick={{ fill: "black" }}
+                      stroke="black"
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="turbidity" 
+                      stroke="#ff7300"
+                      strokeWidth={3}
+                      connectNulls
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="h-[250px] md:h-[300px]">
+                <h3 className="text-lg font-semibold mb-4">Turbidity Predictions</h3>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={predictedData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <XAxis 
+                      dataKey="timestamp" 
+                      tick={{ fontSize: 12, fill: "black" }}
+                      angle={-45}
+                      textAnchor="end"
+                      stroke="black"
+                    />
+                    <YAxis 
+                      tick={{ fill: "black" }}
+                      stroke="black"
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="turbidity" 
+                      stroke="#ff0000"
+                      strokeWidth={2}
+                      connectNulls
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
 
-            {/* Conductivity Charts */}
-            <div className="h-[250px] md:h-[300px]">
-              <h3 className="text-lg font-semibold mb-4">Conductivity Trends</h3>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={realData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tick={{ fontSize: 12, fill: "black" }}
-                    angle={-45}
-                    textAnchor="end"
-                    stroke="black"
-                  />
-                  <YAxis 
-                    tick={{ fill: "black" }}
-                    stroke="black"
-                  />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="conductivity" 
-                    stroke="#9c27b0"
-                    strokeWidth={3}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              {/* Conductivity Charts */}
+              <div className="h-[250px] md:h-[300px]">
+                <h3 className="text-lg font-semibold mb-4">Conductivity Trends</h3>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={realData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <XAxis 
+                      dataKey="timestamp" 
+                      tick={{ fontSize: 12, fill: "black" }}
+                      angle={-45}
+                      textAnchor="end"
+                      stroke="black"
+                    />
+                    <YAxis 
+                      tick={{ fill: "black" }}
+                      stroke="black"
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="conductivity" 
+                      stroke="#9c27b0"
+                      strokeWidth={3}
+                      connectNulls
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="h-[250px] md:h-[300px]">
+                <h3 className="text-lg font-semibold mb-4">Conductivity Predictions</h3>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={predictedData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="black" />
+                    <XAxis 
+                      dataKey="timestamp" 
+                      tick={{ fontSize: 12, fill: "black" }}
+                      angle={-45}
+                      textAnchor="end"
+                      stroke="black"
+                    />
+                    <YAxis 
+                      tick={{ fill: "black" }}
+                      stroke="black"
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="conductivity" 
+                      stroke="#ff0000"
+                      strokeWidth={2}
+                      connectNulls
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-            <div className="h-[250px] md:h-[300px]">
-              <h3 className="text-lg font-semibold mb-4">Conductivity Predictions</h3>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={predictedData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="black" />
-                  <XAxis 
-                    dataKey="timestamp" 
-                    tick={{ fontSize: 12, fill: "black" }}
-                    angle={-45}
-                    textAnchor="end"
-                    stroke="black"
-                  />
-                  <YAxis 
-                    tick={{ fill: "black" }}
-                    stroke="black"
-                  />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)" }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="conductivity" 
-                    stroke="#ff0000"
-                    strokeWidth={2}
-                    connectNulls
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white/40 border border-black/20 rounded-lg backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-black">Model Information</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* LSTM Architecture */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-black mb-4">LSTM Architecture</h3>
+                <div className="flex flex-col items-center justify-center gap-4">
+                  <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="w-20 h-20 bg-indigo-100 rounded-lg flex items-center justify-center border-2 border-indigo-500">
+                        <span className="text-xs text-black text-center">Input Layer<br/>(5 features)</span>
+                      </div>
+                    </div>
+                    <div className="hidden md:block text-2xl text-black">→</div>
+                    <div className="flex flex-col items-center">
+                      <div className="w-20 h-20 bg-purple-100 rounded-lg flex items-center justify-center border-2 border-purple-500">
+                        <span className="text-xs text-black text-center">LSTM Layer<br/>(128 units)</span>
+                      </div>
+                    </div>
+                    <div className="hidden md:block text-2xl text-black">→</div>
+                    <div className="flex flex-col items-center">
+                      <div className="w-20 h-20 bg-blue-100 rounded-lg flex items-center justify-center border-2 border-blue-500">
+                        <span className="text-xs text-black text-center">LSTM Layer<br/>(64 units)</span>
+                      </div>
+                    </div>
+                    <div className="hidden md:block text-2xl text-black">→</div>
+                    <div className="flex flex-col items-center">
+                      <div className="w-20 h-20 bg-green-100 rounded-lg flex items-center justify-center border-2 border-green-500">
+                        <span className="text-xs text-black text-center">Dense Layer<br/>(5 units)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Forecasting Process */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-black mb-4">Forecasting Process</h3>
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="w-full bg-blue-100 rounded-lg border-2 border-blue-500 p-4">
+                    <p className="text-xs text-center text-black">
+                      1. Input Sequence (10 timesteps)
+                    </p>
+                  </div>
+                  <div className="w-0.5 h-4 bg-blue-500"></div>
+                  <div className="w-full bg-purple-100 rounded-lg border-2 border-purple-500 p-4">
+                    <p className="text-xs text-center text-black">
+                      2. Feature Scaling & Normalization
+                    </p>
+                  </div>
+                  <div className="w-0.5 h-4 bg-purple-500"></div>
+                  <div className="w-full bg-green-100 rounded-lg border-2 border-green-500 p-4">
+                    <p className="text-xs text-center text-black">
+                      3. Generate 24-hour Predictions
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Model Performance */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-black mb-4">Model Performance</h3>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-sm font-medium text-black mb-2">Training Metrics</h4>
+                    <ul className="list-disc list-inside text-sm text-black/80">
+                      <li>Mean Squared Error: 0.0432</li>
+                      <li>Root Mean Squared Error: 0.208</li>
+                      <li>Mean Absolute Error: 0.187</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-black mb-2">Model Capabilities</h4>
+                    <ul className="list-disc list-inside text-sm text-black/80">
+                      <li>24-hour ahead predictions</li>
+                      <li>Multi-parameter forecasting</li>
+                      <li>Real-time updates</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Feature Analysis */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-black mb-4">Feature Analysis</h3>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-black">pH Level</span>
+                      <span className="text-sm text-black">92%</span>
+                    </div>
+                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '92%' }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-black">Temperature</span>
+                      <span className="text-sm text-black">88%</span>
+                    </div>
+                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '88%' }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-black">TDS</span>
+                      <span className="text-sm text-black">85%</span>
+                    </div>
+                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '85%' }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-black">Conductivity</span>
+                      <span className="text-sm text-black">82%</span>
+                    </div>
+                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '82%' }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-black">Turbidity</span>
+                      <span className="text-sm text-black">78%</span>
+                    </div>
+                    <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '78%' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </>
     );
   };
 
@@ -823,7 +989,7 @@ const App = () => {
                 }`}
                 onClick={() => setActiveTab('visualizations')}
               >
-                Data Visualizations
+                Time Series Forecasting
               </button>
               <button
                 className={`px-2 md:px-4 py-3 text-xs md:text-sm font-medium whitespace-nowrap ${

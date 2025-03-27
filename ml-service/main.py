@@ -324,3 +324,35 @@ async def simulate_quality(reading: SensorReading):
         print(f"\nError in simulate_quality: {str(e)}")
         return {"error": str(e)}
 
+@app.post("/train-prediction-model")
+async def train_prediction_model():
+    try:
+        # Fetch all available data
+        df = fetch_sensor_data()
+        if df.empty:
+            raise HTTPException(status_code=400, detail="No sensor data available")
+        
+        # Extract features for training
+        features = df[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']]
+        
+        # Train the model
+        print("\nTraining LSTM prediction model...")
+        model.train(features, seq_length=10)
+        
+        # Save the trained model
+        os.makedirs('app/models/saved/lstm_model', exist_ok=True)
+        model.save(
+            'app/models/saved/lstm_model/model',
+            'app/models/saved/lstm_model/scaler.pkl'
+        )
+        
+        return {
+            "message": "LSTM prediction model trained successfully",
+            "data_points": len(features),
+            "sequence_length": 10
+        }
+        
+    except Exception as e:
+        print(f"Training error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
