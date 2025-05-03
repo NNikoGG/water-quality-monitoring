@@ -21,7 +21,7 @@ class WaterQualityLSTM:
             tf.keras.layers.Dense(25, activation='relu'),
             tf.keras.layers.Dense(n_features)
         ])
-        model.compile(optimizer='adam', loss='mse')
+        model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredError())  # Explicit loss object
         return model
     
     def train(self, df, seq_length=10):
@@ -70,9 +70,12 @@ class WaterQualityLSTM:
         return predictions
     
     def save(self, model_path, scaler_path):
-        self.model.save(model_path)
+        # Save model in native Keras format with .keras extension
+        self.model.save(f"{model_path}.keras")
         joblib.dump(self.scaler, scaler_path)
     
     def load(self, model_path, scaler_path):
-        self.model = tf.keras.models.load_model(model_path)
+        # Load model from native Keras format
+        print(f"Loading model from: {model_path}.keras")  # Debug
+        self.model = tf.keras.models.load_model(f"{model_path}.keras")
         self.scaler = joblib.load(scaler_path)

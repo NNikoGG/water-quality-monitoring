@@ -15,13 +15,13 @@ class CorrosionPredictor:
         
     def preprocess_data(self, data):
         """Preprocess the input data for LSTM model"""
-        # Assuming data has columns: pH, TDS, temperature, etc.
-        scaled_data = self.scaler.fit_transform(data)
+        # Select only sensor features for scaling
+        sensor_features = ['ph', 'turbidity', 'tds', 'temperature', 'conductivity']
+        scaled_data = self.scaler.fit_transform(data[sensor_features])
         X, y = [], []
         
         for i in range(len(scaled_data) - self.sequence_length):
             X.append(scaled_data[i:(i + self.sequence_length)])
-            # 1 for corrosive, 0 for non-corrosive
             y.append(1 if data['is_corrosive'].iloc[i + self.sequence_length] else 0)
             
         return np.array(X), np.array(y)
@@ -39,7 +39,7 @@ class CorrosionPredictor:
         
         self.model.compile(
             optimizer='adam',
-            loss='binary_crossentropy',
+            loss=tf.keras.losses.BinaryCrossentropy(),
             metrics=['accuracy']
         )
         
@@ -61,22 +61,17 @@ class CorrosionPredictor:
         if self.model is None:
             raise ValueError("Model not trained yet")
             
-        # Convert sequence to DataFrame if it's a numpy array
         if isinstance(sequence, np.ndarray):
             sequence = pd.DataFrame(sequence, columns=['ph', 'turbidity', 'tds', 'temperature', 'conductivity'])
             
-        # Check if the sequence is corrosive based on actual values
         current_corrosive = is_corrosive(sequence.iloc[-1].to_dict())
             
-        # Ensure sequence is properly scaled
         try:
-            # Convert to numpy array before scaling to avoid the warning
             sequence_values = sequence[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].values
             scaled_sequence = self.scaler.transform(sequence_values)
         except ValueError as e:
             print(f"Scaling error: {e}")
             print("Attempting to reshape data...")
-            # Try to reshape the data if needed
             if len(sequence.shape) == 2 and sequence.shape[0] >= self.sequence_length:
                 sequence = sequence[-self.sequence_length:]
                 sequence_values = sequence[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].values
@@ -84,17 +79,13 @@ class CorrosionPredictor:
             else:
                 raise ValueError(f"Invalid sequence shape: {sequence.shape}. Expected ({self.sequence_length}, 5)")
         
-        # Reshape for prediction
         X = scaled_sequence.reshape(1, self.sequence_length, -1)
         
-        # Get prediction
         prediction = self.model.predict(X)
         risk_probability = float(prediction[0][0])
         
-        # Determine risk level based on both model prediction and current conditions
         if current_corrosive:
             risk_level = 'High'
-            # Adjust probability to be in the high range
             risk_probability = max(0.7, risk_probability)
         else:
             if risk_probability > 0.7:
@@ -114,11 +105,11 @@ class CorrosionPredictor:
         """Save the model and scaler"""
         if self.model is None:
             raise ValueError("No model to save")
-        
-        self.model.save(model_path)
+        self.model.save(f"{model_path}.keras")
         joblib.dump(self.scaler, scaler_path)
     
     def load_model(self, model_path, scaler_path):
         """Load the saved model and scaler"""
-        self.model = tf.keras.models.load_model(model_path)
-        self.scaler = joblib.load(scaler_path) 
+        print(f"Loading corrosion model from: {model_path}.keras")
+        self.model = tf.keras.models.load_model(f"{model_path}.keras")
+        self.scaler = joblib.load(scaler_path)

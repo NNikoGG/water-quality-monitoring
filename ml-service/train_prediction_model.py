@@ -46,12 +46,12 @@ def main():
     model.train(data, seq_length=10)
     
     print("Saving model...")
-    os.makedirs('app/models/saved/lstm_model', exist_ok=True)
+    os.makedirs('app/models/saved', exist_ok=True)
     model.save(
-        'app/models/saved/lstm_model/model',
-        'app/models/saved/lstm_model/scaler.pkl'
+        'app/models/saved/lstm_model',  # Will save as lstm_model.keras
+        'app/models/saved/lstm_model_scaler.pkl'
     )
     print("Model training completed!")
 
 if __name__ == "__main__":
-    main() 
+    main()

@@ -36,28 +36,27 @@ class SensorReading(BaseModel):
 class CorrosionData(BaseModel):
     readings: List[SensorReading]
 
-# Load model
+# Load LSTM model
 model = WaterQualityLSTM()
 try:
-    model.load('app/models/saved/lstm_model', 'app/models/saved/scaler.pkl')
-except OSError:
-    # Train model if saved model doesn't exist
-    # You'll need to implement this part to fetch training data and train the model
-    print("No saved model found. Training new model...")
+    model.load('app/models/saved/lstm_model', 'app/models/saved/lstm_model_scaler.pkl')
+except (OSError, ValueError) as e:
+    print(f"No saved LSTM model found: {str(e)}. Training new model...")
     training_data = fetch_sensor_data()  # Get historical data
     if not training_data.empty:
         features = training_data[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']]
         model.train(features)
-        # Save the trained model
         os.makedirs('app/models/saved', exist_ok=True)
-        model.save('app/models/saved/lstm_model', 'app/models/saved/scaler.pkl')
+        model.save('app/models/saved/lstm_model', 'app/models/saved/lstm_model_scaler.pkl')
+    else:
+        print("No training data available. LSTM model not trained.")
 
-# Initialize corrosion predictor
+# Load corrosion model
 corrosion_model = CorrosionPredictor()
 try:
     corrosion_model.load_model('app/models/saved/corrosion_model', 'app/models/saved/corrosion_scaler.pkl')
-except OSError:
-    print("No saved corrosion model found. Model will need to be trained with corrosion data.")
+except (OSError, ValueError) as e:
+    print(f"No saved corrosion model found: {str(e)}. Model will need to be trained via /train-corrosion-model or train_model.py.")
 
 # Initialize water quality classifier
 quality_classifier = WaterQualityClassifier()
@@ -65,16 +64,14 @@ try:
     print("\nLoading water quality classifier...")
     quality_classifier.load_model('app/models/saved/quality_classifier', 'app/models/saved/quality_scaler.pkl')
     print("Water quality classifier loaded successfully!")
-except OSError as e:
+except (OSError, ValueError) as e:
     print(f"\nError loading quality classifier: {str(e)}")
     print("No saved quality classifier found. Model will be trained with available data.")
-    # Train with available data
     print("\nTraining new quality classifier...")
     df = fetch_sensor_data()
     if not df.empty:
         training_results = quality_classifier.train(df)
         print(f"\nTraining results: {training_results}")
-        # Save the trained model
         os.makedirs('app/models/saved', exist_ok=True)
         quality_classifier.save_model(
             'app/models/saved/quality_classifier',
@@ -99,15 +96,15 @@ async def get_predictions():
         missing_values = df[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].isnull().sum()
         print(f"Missing values per column: {missing_values}")  # Debug
         
-        features = df[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].values[-10:]
+        features = df[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].tail(10)
         print(f"Input features shape: {features.shape}")  # Debug
         
         # Make predictions
-        predictions = model.predict(features, n_steps=24)
+        predictions = model.predict(features.values, n_steps=24)
         print(f"Raw predictions shape: {predictions.shape}")  # Debug
         
         # Generate future timestamps
-        last_timestamp = df['timestamp'].max()
+        last_timestamp = pd.to_datetime(df['timestamp'].max())
         future_timestamps = [
             (last_timestamp + timedelta(hours=i)).isoformat()
             for i in range(1, 25)
@@ -133,7 +130,7 @@ async def get_predictions():
         return response
     except Exception as e:
         print(f"Prediction error: {str(e)}")  # Debug log
-        raise
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/train-corrosion-model")
 async def train_corrosion_model(
@@ -203,7 +200,9 @@ async def predict_corrosion():
             return {"error": "No sensor data available"}
         
         # Get last 10 readings for current prediction
-        recent_data = df[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].tail(10).values
+        recent_data = df[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].tail(10)
+        if len(recent_data) < 10:
+            return {"error": f"Not enough data points for corrosion prediction, need 10, got {len(recent_data)}"}
         
         # Make prediction for current state
         prediction = corrosion_model.predict(recent_data)
@@ -211,6 +210,34 @@ async def predict_corrosion():
         
         return prediction
     except Exception as e:
+        print(f"Predict corrosion error: {str(e)}")
+        return {"error": str(e)}
+
+@app.post("/simulate-corrosion")
+async def simulate_corrosion(readings: List[SensorReading]):
+    try:
+        # Validate number of readings
+        if len(readings) != 10:
+            return {"error": f"Expected 10 readings, got {len(readings)}"}
+        
+        # Convert readings to DataFrame
+        sequence = pd.DataFrame([
+            {
+                "ph": reading.ph,
+                "turbidity": reading.turbidity,
+                "tds": reading.tds,
+                "temperature": reading.temperature,
+                "conductivity": reading.conductivity
+            } for reading in readings
+        ])
+        
+        # Make prediction
+        prediction = corrosion_model.predict(sequence)
+        prediction['timestamp'] = datetime.now().isoformat()
+        
+        return prediction
+    except Exception as e:
+        print(f"Simulate corrosion error: {str(e)}")
         return {"error": str(e)}
 
 @app.post("/train-corrosion-model/analyze")
@@ -299,20 +326,6 @@ async def predict_quality():
         print(f"\nError in predict_quality: {str(e)}")
         return {"error": str(e)}
 
-@app.post("/simulate-corrosion")
-async def simulate_corrosion(readings: List[SensorReading]):
-    try:
-        # Convert readings to DataFrame
-        sequence = pd.DataFrame([reading.dict() for reading in readings])
-        
-        # Make prediction
-        prediction = corrosion_model.predict(sequence)
-        
-        return prediction
-    except Exception as e:
-        print(f"\nError in simulate_corrosion: {str(e)}")
-        return {"error": str(e)}
-
 @app.post("/simulate-quality")
 async def simulate_quality(reading: SensorReading):
     try:
@@ -340,10 +353,10 @@ async def train_prediction_model():
         model.train(features, seq_length=10)
         
         # Save the trained model
-        os.makedirs('app/models/saved/lstm_model', exist_ok=True)
+        os.makedirs('app/models/saved', exist_ok=True)
         model.save(
-            'app/models/saved/lstm_model/model',
-            'app/models/saved/lstm_model/scaler.pkl'
+            'app/models/saved/lstm_model',
+            'app/models/saved/lstm_model_scaler.pkl'
         )
         
         return {
@@ -355,4 +368,3 @@ async def train_prediction_model():
     except Exception as e:
         print(f"Training error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-
