@@ -1,3 +1,5 @@
+import os
+import requests
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
@@ -11,23 +13,33 @@ class CorrosionPredictor:
     def __init__(self):
         self.model = None
         self.scaler = MinMaxScaler()
-        self.sequence_length = 10  # We'll use 10 time steps for prediction
-        
+        self.sequence_length = 10
+        self.api_url = os.getenv("API_URL", "http://localhost:8000")  # Default to localhost for local dev
+
     def preprocess_data(self, data):
         """Preprocess the input data for LSTM model"""
-        # Select only sensor features for scaling
         sensor_features = ['ph', 'turbidity', 'tds', 'temperature', 'conductivity']
         scaled_data = self.scaler.fit_transform(data[sensor_features])
         X, y = [], []
-        
         for i in range(len(scaled_data) - self.sequence_length):
             X.append(scaled_data[i:(i + self.sequence_length)])
             y.append(1 if data['is_corrosive'].iloc[i + self.sequence_length] else 0)
-            
         return np.array(X), np.array(y)
-    
+
+    def train_model(self, corrosive_data):
+        """Train the model by calling the API endpoint"""
+        url = f"{self.api_url}/train-corrosion-model"
+        payload = {"readings": corrosive_data}
+        try:
+            response = requests.post(url, json=payload)
+            response.raise_for_status()
+            print("Model trained successfully:", response.json())
+            return response.json()
+        except requests.RequestException as e:
+            raise Exception(f"Failed to train model: {str(e)}")
+
     def build_model(self, input_shape):
-        """Build the LSTM model architecture"""
+        """Build the LSTM model"""
         self.model = Sequential([
             LSTM(64, input_shape=input_shape, return_sequences=True),
             Dropout(0.2),
@@ -36,18 +48,12 @@ class CorrosionPredictor:
             Dense(16, activation='relu'),
             Dense(1, activation='sigmoid')
         ])
-        
-        self.model.compile(
-            optimizer='adam',
-            loss=tf.keras.losses.BinaryCrossentropy(),
-            metrics=['accuracy']
-        )
-        
+        self.model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
     def train(self, X_train, y_train, epochs=50, batch_size=32, validation_split=0.2):
-        """Train the LSTM model"""
+        """Train the model locally (used by /train-corrosion-model endpoint)"""
         if self.model is None:
             self.build_model((X_train.shape[1], X_train.shape[2]))
-            
         return self.model.fit(
             X_train, y_train,
             epochs=epochs,
@@ -55,61 +61,32 @@ class CorrosionPredictor:
             validation_split=validation_split,
             verbose=1
         )
-    
-    def predict(self, sequence):
-        """Make predictions on new data"""
-        if self.model is None:
-            raise ValueError("Model not trained yet")
-            
-        if isinstance(sequence, np.ndarray):
-            sequence = pd.DataFrame(sequence, columns=['ph', 'turbidity', 'tds', 'temperature', 'conductivity'])
-            
-        current_corrosive = is_corrosive(sequence.iloc[-1].to_dict())
-            
-        try:
-            sequence_values = sequence[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].values
-            scaled_sequence = self.scaler.transform(sequence_values)
-        except ValueError as e:
-            print(f"Scaling error: {e}")
-            print("Attempting to reshape data...")
-            if len(sequence.shape) == 2 and sequence.shape[0] >= self.sequence_length:
-                sequence = sequence[-self.sequence_length:]
-                sequence_values = sequence[['ph', 'turbidity', 'tds', 'temperature', 'conductivity']].values
-                scaled_sequence = self.scaler.transform(sequence_values)
-            else:
-                raise ValueError(f"Invalid sequence shape: {sequence.shape}. Expected ({self.sequence_length}, 5)")
-        
-        X = scaled_sequence.reshape(1, self.sequence_length, -1)
-        
-        prediction = self.model.predict(X)
-        risk_probability = float(prediction[0][0])
-        
-        if current_corrosive:
-            risk_level = 'High'
-            risk_probability = max(0.7, risk_probability)
+
+    def predict(self, data):
+        """Predict corrosion risk"""
+        sensor_features = ['ph', 'turbidity', 'tds', 'temperature', 'conductivity']
+        if isinstance(data, pd.DataFrame):
+            X = data[sensor_features].values
         else:
-            if risk_probability > 0.7:
-                risk_level = 'High'
-            elif risk_probability > 0.3:
-                risk_level = 'Medium'
-            else:
-                risk_level = 'Low'
-        
+            X = data
+        if X.shape[0] < self.sequence_length:
+            raise ValueError(f"Input data must have at least {self.sequence_length} timesteps")
+        X_scaled = self.scaler.transform(X)
+        X_sequence = np.array([X_scaled[-self.sequence_length:]])
+        prediction = self.model.predict(X_sequence, verbose=0)[0][0]
+        risk_level = "High" if prediction > 0.7 else "Medium" if prediction > 0.3 else "Low"
         return {
-            'risk_probability': risk_probability,
-            'risk_level': risk_level,
-            'current_conditions_corrosive': current_corrosive
+            "risk_probability": float(prediction),
+            "risk_level": risk_level,
+            "current_conditions_corrosive": bool(prediction > 0.5)
         }
-    
+
     def save_model(self, model_path, scaler_path):
         """Save the model and scaler"""
-        if self.model is None:
-            raise ValueError("No model to save")
-        self.model.save(f"{model_path}.keras")
+        self.model.save(model_path)
         joblib.dump(self.scaler, scaler_path)
-    
+
     def load_model(self, model_path, scaler_path):
-        """Load the saved model and scaler"""
-        print(f"Loading corrosion model from: {model_path}.keras")
-        self.model = tf.keras.models.load_model(f"{model_path}.keras")
+        """Load the model and scaler"""
+        self.model = tf.keras.models.load_model(model_path)
         self.scaler = joblib.load(scaler_path)

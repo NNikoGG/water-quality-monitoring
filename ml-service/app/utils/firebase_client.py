@@ -1,31 +1,22 @@
 import os
 import pandas as pd
 from datetime import datetime
-from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import credentials, db
-
-# Load environment variables
-load_dotenv()
-
-# Get the absolute path to the service account file
-SERVICE_ACCOUNT_PATH = os.path.abspath(os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-    'serviceAccountKey.json'
-))
 
 def initialize_firebase():
     """Initialize Firebase Admin SDK with service account"""
     try:
         # Check if already initialized
         if not firebase_admin._apps:
-            if not os.path.exists(SERVICE_ACCOUNT_PATH):
-                raise FileNotFoundError(f"Service account file not found at: {SERVICE_ACCOUNT_PATH}")
+            cred_path = os.getenv("FIREBASE_CREDENTIALS", "/app/serviceAccountKey.json")
+            if not os.path.exists(cred_path):
+                raise FileNotFoundError(f"Service account file not found at: {cred_path}")
                 
             # Use service account file
-            cred = credentials.Certificate(SERVICE_ACCOUNT_PATH)
+            cred = credentials.Certificate(cred_path)
             firebase_admin.initialize_app(cred, {
-                'databaseURL': os.getenv('FIREBASE_DATABASE_URL')
+                'databaseURL': os.getenv("FIREBASE_DATABASE_URL")
             })
     except Exception as e:
         print(f"Error initializing Firebase: {e}")
