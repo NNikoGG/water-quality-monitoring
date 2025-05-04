@@ -53,7 +53,7 @@ def train_corrosion_model():
                 return
             
             # API endpoint
-            url = 'http://localhost:8000/train-corrosion-model'
+            url = 'http://localhost:8080/train-corrosion-model'
             
             # Training parameters
             params = {
