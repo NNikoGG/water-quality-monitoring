@@ -14,5 +14,3 @@ venv/
 .env.production.local
 .git
 .gitignore
-app/models/saved/*.keras
-app/models/saved/*.pkl
