@@ -22,8 +22,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the entire ml-service directory (filtered by .dockerignore)
 COPY . .
 
-# Expose port 8000 (FastAPI default)
-EXPOSE 8000
+# Expose port 8080 (FastAPI default)
+EXPOSE 8080
 
 # Command to run the FastAPI app with Uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "2"]
