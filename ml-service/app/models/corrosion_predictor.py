@@ -14,7 +14,7 @@ class CorrosionPredictor:
         self.model = None
         self.scaler = MinMaxScaler()
         self.sequence_length = 10
-        self.api_url = os.getenv("API_URL", "http://localhost:8000")  # Default to localhost for local dev
+        self.api_url = os.getenv("API_URL", "http://localhost:8080")  # Fallback 8080
 
     def preprocess_data(self, data):
         """Preprocess the input data for LSTM model"""
@@ -83,7 +83,6 @@ class CorrosionPredictor:
 
     def save_model(self, model_path, scaler_path):
         """Save the model and scaler"""
-        # Ensure model_path has .keras extension
         if not model_path.endswith('.keras'):
             model_path = model_path + '.keras'
         self.model.save(model_path)
@@ -93,7 +92,6 @@ class CorrosionPredictor:
     def load_model(self, model_path, scaler_path):
         """Load the model and scaler"""
         try:
-            # Ensure model_path has .keras extension
             if not model_path.endswith('.keras'):
                 model_path = model_path + '.keras'
             self.model = tf.keras.models.load_model(model_path)
