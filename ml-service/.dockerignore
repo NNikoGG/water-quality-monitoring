@@ -14,6 +14,5 @@ venv/
 .env.production.local
 .git
 .gitignore
-corrosion_data.json
 app/models/saved/*.keras
 app/models/saved/*.pkl
