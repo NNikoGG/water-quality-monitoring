@@ -5,7 +5,6 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Card, CardHeader, CardTitle, CardContent } from "./components/ui/card";
 import PropTypes from 'prop-types';
 import GaugeComponent from 'react-gauge-component';
-import Map from './components/Map';
 import CorrosionRiskAssessment from './components/CorrosionRiskAssessment';
 import WaterQualityClassification from './components/WaterQualityClassification';
 
@@ -15,6 +14,9 @@ const firebaseConfig = {
   databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
 };
+
+// Add backend URL environment variable
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
   
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
@@ -223,7 +225,7 @@ const App = () => {
 
     const fetchPredictions = async () => {
       try {
-      const response = await fetch('http://localhost:8000/predict');
+      const response = await fetch(`${BACKEND_URL}/predict`);
         const data = await response.json();
       
       if (data.error) {
@@ -1078,7 +1080,6 @@ const App = () => {
         {activeTab === 'realtime' && (
           <>
             <RealtimeData />
-            <Map />
           </>
         )}
         {activeTab === 'table' && <DataTable />}

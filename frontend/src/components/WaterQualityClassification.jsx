@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+
 const WaterQualityClassification = () => {
   const [qualityData, setQualityData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +18,7 @@ const WaterQualityClassification = () => {
 
   const fetchQualityData = async () => {
     try {
-      const response = await fetch('http://localhost:8000/predict-quality');
+      const response = await fetch(`${BACKEND_URL}/predict-quality`);
       const data = await response.json();
       
       if (data.error) {
@@ -77,7 +79,7 @@ const WaterQualityClassification = () => {
 
   const simulateQuality = async () => {
     try {
-      const response = await fetch('http://localhost:8000/simulate-quality', {
+      const response = await fetch(`${BACKEND_URL}/simulate-quality`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

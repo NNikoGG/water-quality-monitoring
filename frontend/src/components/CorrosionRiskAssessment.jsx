@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+
 const CorrosionRiskAssessment = () => {
   const [riskData, setRiskData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,7 +27,7 @@ const CorrosionRiskAssessment = () => {
 
   const fetchCorrosionRisk = async () => {
     try {
-      const response = await fetch('http://localhost:8000/predict-corrosion');
+      const response = await fetch(`${BACKEND_URL}/predict-corrosion`);
       const data = await response.json();
       
       if (data.error) {
@@ -89,7 +91,7 @@ const CorrosionRiskAssessment = () => {
 
   const simulateCorrosion = async () => {
     try {
-      const response = await fetch('http://localhost:8000/simulate-corrosion', {
+      const response = await fetch(`${BACKEND_URL}/simulate-corrosion`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
