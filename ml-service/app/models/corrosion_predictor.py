@@ -83,10 +83,22 @@ class CorrosionPredictor:
 
     def save_model(self, model_path, scaler_path):
         """Save the model and scaler"""
+        # Ensure model_path has .keras extension
+        if not model_path.endswith('.keras'):
+            model_path = model_path + '.keras'
         self.model.save(model_path)
         joblib.dump(self.scaler, scaler_path)
+        print(f"Model saved to {model_path}, scaler saved to {scaler_path}")
 
     def load_model(self, model_path, scaler_path):
         """Load the model and scaler"""
-        self.model = tf.keras.models.load_model(model_path)
-        self.scaler = joblib.load(scaler_path)
+        try:
+            # Ensure model_path has .keras extension
+            if not model_path.endswith('.keras'):
+                model_path = model_path + '.keras'
+            self.model = tf.keras.models.load_model(model_path)
+            self.scaler = joblib.load(scaler_path)
+            print(f"Model loaded from {model_path}, scaler loaded from {scaler_path}")
+        except Exception as e:
+            print(f"Error loading model or scaler: {str(e)}")
+            raise
