@@ -832,6 +832,31 @@ const App = () => {
                 </div>
               </div>
 
+            {/* Sliding Window Visualization */}
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-100 mb-4">Sliding Window Approach</h3>
+              <div className="relative overflow-x-auto">
+                <div className="flex items-center space-x-1 mb-4">
+                  {[...Array(10)].map((_, i) => (
+                    <div key={i} className="flex-1 h-12 bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center">
+                      <span className="text-xs text-slate-100">R{i + 1}</span>
+                    </div>
+                  ))}
+                  <div className="flex-1 h-12 bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center">
+                    <span className="text-xs text-slate-100">Pred</span>
+                  </div>
+                </div>
+                <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                  <div className="relative h-full">
+                    <div className="absolute top-0 left-0 w-[91%] h-full border-2 border-cyan-500 rounded-lg border-dashed"></div>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 mt-2">
+                Analyzes 10 consecutive readings to predict the next risk level
+              </p>
+            </div>
+
               {/* Forecasting Process */}
               <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-slate-100 mb-4">Forecasting Process</h3>
@@ -880,7 +905,7 @@ const App = () => {
               </div>
 
               {/* Feature Analysis */}
-              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+              {/* <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-slate-100 mb-4">Feature Analysis</h3>
                 <div className="space-y-3">
                   <div>
@@ -929,7 +954,7 @@ const App = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </CardContent>
         </Card>
