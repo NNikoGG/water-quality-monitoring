@@ -972,7 +972,7 @@ const App = () => {
           </p>
           <h3 className="text-lg font-semibold mb-4 text-slate-100">Under the Guidance of</h3>
           <p className="text-sm md:text-base text-slate-400">
-            Prof. Dinesh Shankar Pegu
+            Dr. Ananya Choudhury
           </p>
         </div>
       </div>
