@@ -99,7 +99,8 @@ except (OSError, ValueError) as e:
     print("\nTraining new quality classifier...")
     df = fetch_sensor_data()
     if not df.empty:
-        training_results = quality_classifier.train(df)
+        # Train with basic 5 features for compatibility
+        training_results = quality_classifier.train(df, use_enhanced_features=False)
         print(f"\nTraining results: {training_results}")
         os.makedirs('app/models/saved', exist_ok=True)
         quality_classifier.save_model(
@@ -337,8 +338,8 @@ async def train_quality_classifier():
         if df.empty:
             raise HTTPException(status_code=400, detail="No sensor data available")
         
-        # Train the model
-        training_results = quality_classifier.train(df)
+        # Train the model with basic 5 features
+        training_results = quality_classifier.train(df, use_enhanced_features=False)
         
         # Save the trained model
         os.makedirs('app/models/saved', exist_ok=True)
