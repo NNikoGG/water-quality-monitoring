@@ -451,9 +451,31 @@ const App = () => {
 
     if (!predictions) {
       return (
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-        </div>
+        <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-slate-100">Time Series Forecasting</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="flex flex-col justify-center items-center min-h-[400px] space-y-4">
+              <div className="relative">
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-600 border-t-cyan-400"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="animate-pulse rounded-full h-8 w-8 bg-cyan-400 opacity-75"></div>
+                </div>
+              </div>
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-semibold text-slate-100">Analyzing Water Quality Trends</h3>
+                <p className="text-slate-400 max-w-md">
+                  Our AI models are processing historical data to generate accurate predictions for pH, temperature, TDS, turbidity, and conductivity levels...
+                </p>
+                <div className="flex items-center justify-center space-x-1 text-cyan-400">
+                  <div className="animate-bounce">🔬</div>
+                  <span className="text-sm">Processing sensor data</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       );
     }
 

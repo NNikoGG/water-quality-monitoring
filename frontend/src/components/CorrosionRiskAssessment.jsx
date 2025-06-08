@@ -6,6 +6,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 const CorrosionRiskAssessment = () => {
   const [riskData, setRiskData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [simulationLoading, setSimulationLoading] = useState(false);
   const [error, setError] = useState(null);
   const [simulatedParams, setSimulatedParams] = useState({
     ph: 7,
@@ -90,6 +91,7 @@ const CorrosionRiskAssessment = () => {
   };
 
   const simulateCorrosion = async () => {
+    setSimulationLoading(true);
     try {
       const response = await fetch(`${BACKEND_URL}/simulate-corrosion`, {
         method: 'POST',
@@ -107,6 +109,8 @@ const CorrosionRiskAssessment = () => {
       setSimulatedRisk(data);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setSimulationLoading(false);
     }
   };
 
@@ -176,9 +180,31 @@ const CorrosionRiskAssessment = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-      </div>
+      <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="text-slate-100">Corrosion Risk Assessment</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="flex flex-col justify-center items-center min-h-[400px] space-y-4">
+            <div className="relative">
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-600 border-t-red-400"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="animate-pulse rounded-full h-8 w-8 bg-red-400 opacity-75"></div>
+              </div>
+            </div>
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-semibold text-slate-100">Evaluating Corrosion Risk</h3>
+              <p className="text-slate-400 max-w-md">
+                Analyzing water chemistry parameters to assess potential corrosion risks for infrastructure and equipment...
+              </p>
+              <div className="flex items-center justify-center space-x-1 text-red-400">
+                <div className="animate-bounce">⚡</div>
+                <span className="text-sm">Running corrosion models</span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -474,10 +500,18 @@ const CorrosionRiskAssessment = () => {
                 </div>
 
                 <button
-                  className="w-full mt-4 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
+                  className="w-full mt-4 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   onClick={simulateCorrosion}
+                  disabled={simulationLoading}
                 >
-                  Simulate Corrosion Risk
+                  {simulationLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                      <span>Running Simulation...</span>
+                    </>
+                  ) : (
+                    'Simulate Corrosion Risk'
+                  )}
                 </button>
               </div>
             </div>
