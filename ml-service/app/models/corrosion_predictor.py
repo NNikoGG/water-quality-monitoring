@@ -182,8 +182,18 @@ class CorrosionPredictor:
             callbacks=callbacks
         )
 
+    def is_trained(self):
+        """Check if the model and scaler are ready for predictions"""
+        return (self.model is not None and 
+                hasattr(self.scaler, 'scale_') and 
+                self.scaler.scale_ is not None)
+
     def predict(self, data):
         """Enhanced prediction with better risk level determination"""
+        # Check if model is trained
+        if not self.is_trained():
+            raise ValueError("Model is not trained. Please train the model first or load a pre-trained model.")
+        
         sensor_features = ['ph', 'turbidity', 'tds', 'temperature', 'conductivity']
         if isinstance(data, pd.DataFrame):
             X = data[sensor_features].values

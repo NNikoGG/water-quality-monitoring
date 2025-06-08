@@ -24,6 +24,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def root():
+    return {"message": "Water Quality Monitoring API"}
+
+@app.get("/health")
+async def health_check():
+    """Check the status of all models"""
+    return {
+        "status": "healthy",
+        "models": {
+            "lstm_prediction": {
+                "loaded": model.model is not None,
+                "description": "LSTM model for water quality parameter forecasting"
+            },
+            "corrosion_prediction": {
+                "loaded": corrosion_model_loaded and corrosion_model.is_trained(),
+                "description": "LSTM model for corrosion risk assessment"
+            },
+            "quality_classification": {
+                "loaded": quality_classifier.model is not None,
+                "description": "Classification model for water quality assessment"
+            }
+        }
+    }
+
 # Data validation models
 class SensorReading(BaseModel):
     ph: float = Field(ge=0, le=14)
@@ -53,10 +78,14 @@ except (OSError, ValueError) as e:
 
 # Load corrosion model
 corrosion_model = CorrosionPredictor()
+corrosion_model_loaded = False
 try:
     corrosion_model.load_model('app/models/saved/corrosion_model', 'app/models/saved/corrosion_scaler.pkl')
+    corrosion_model_loaded = True
+    print("Corrosion model loaded successfully!")
 except (OSError, ValueError) as e:
-    print(f"No saved corrosion model found: {str(e)}. Model will need to be trained via /train-corrosion-model or train_model.py.")
+    print(f"No saved corrosion model found: {str(e)}.")
+    print("Corrosion predictions will return an error until model is trained via /train-corrosion-model.")
 
 # Initialize water quality classifier
 quality_classifier = WaterQualityClassifier()
@@ -176,6 +205,10 @@ async def train_corrosion_model(
         os.makedirs('app/models/saved', exist_ok=True)
         corrosion_model.save_model('app/models/saved/corrosion_model', 'app/models/saved/corrosion_scaler.pkl')
         
+        # Mark model as loaded
+        global corrosion_model_loaded
+        corrosion_model_loaded = True
+        
         return {
             "message": "Model trained successfully",
             "data_distribution": distribution,
@@ -194,6 +227,16 @@ async def train_corrosion_model(
 @app.get("/predict-corrosion")
 async def predict_corrosion():
     try:
+        # Check if corrosion model is loaded
+        if not corrosion_model_loaded:
+            return {
+                "error": "Corrosion model not loaded. Please train the model first using /train-corrosion-model endpoint.",
+                "training_instructions": {
+                    "method": "POST /train-corrosion-model",
+                    "note": "You need to provide corrosive water quality data to train the model."
+                }
+            }
+        
         # Fetch recent data
         df = fetch_sensor_data()
         if df.empty:
@@ -216,6 +259,16 @@ async def predict_corrosion():
 @app.post("/simulate-corrosion")
 async def simulate_corrosion(readings: List[SensorReading]):
     try:
+        # Check if corrosion model is loaded
+        if not corrosion_model_loaded:
+            return {
+                "error": "Corrosion model not loaded. Please train the model first using /train-corrosion-model endpoint.",
+                "training_instructions": {
+                    "method": "POST /train-corrosion-model",
+                    "note": "You need to provide corrosive water quality data to train the model."
+                }
+            }
+        
         # Validate number of readings
         if len(readings) != 10:
             return {"error": f"Expected 10 readings, got {len(readings)}"}

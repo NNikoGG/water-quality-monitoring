@@ -238,7 +238,7 @@ def train_corrosion_model(sequence_length=10, api_url='http://localhost:8080', e
         
         print(f"\nTraining completed successfully! Model saved to ml-service/app/models/saved/")
         return True
-                
+        
     except requests.exceptions.RequestException as e:
         print(f"\nError during training: {e}")
         if hasattr(e, 'response') and e.response is not None:
