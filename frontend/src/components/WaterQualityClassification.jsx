@@ -154,9 +154,9 @@ const WaterQualityClassification = () => {
         <CardContent className="p-6">
           <div className="flex flex-col justify-center items-center min-h-[400px] space-y-4">
             <div className="relative">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-600 border-t-green-400"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-600 border-t-cyan-400"></div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="animate-pulse rounded-full h-8 w-8 bg-green-400 opacity-75"></div>
+                <div className="animate-pulse rounded-full h-8 w-8 bg-cyan-400 opacity-75"></div>
               </div>
             </div>
             <div className="text-center space-y-2">
@@ -164,7 +164,7 @@ const WaterQualityClassification = () => {
               <p className="text-slate-400 max-w-md">
                 Evaluating water quality parameters against safety standards to determine overall quality grade and compliance levels...
               </p>
-              <div className="flex items-center justify-center space-x-1 text-green-400">
+              <div className="flex items-center justify-center space-x-1 text-cyan-400">
                 <div className="animate-bounce">📊</div>
                 <span className="text-sm">Analyzing quality metrics</span>
               </div>
@@ -233,109 +233,82 @@ const WaterQualityClassification = () => {
           <CardTitle className="text-slate-100">Model Information</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Random Forest Architecture */}
+          <div className="space-y-8">
+            {/* Row 1: Random Forest Architecture (Full Width) */}
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
               <h3 className="text-lg font-semibold text-slate-100 mb-4">Random Forest Architecture</h3>
-              <div className="flex flex-col items-center space-y-4">
-                <div className="grid grid-cols-3 gap-4 w-full">
-                  {/* Sample Decision Trees */}
-                  {[1, 2, 3].map((tree) => (
-                    <div key={tree} className="relative">
-                      <div className="w-full aspect-square bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center p-2">
-                        <div className="text-xs text-center text-slate-100">
-                          Decision<br/>Tree {tree}
-                        </div>
+              <div className="flex items-center justify-center min-h-[700px]">
+                <img 
+                  src="/rf_architecture.png" 
+                  alt="Random Forest Architecture Diagram" 
+                  className="max-w-full max-h-[700px] object-contain rounded-lg"
+                  style={{ filter: 'brightness(0.9)' }}
+                />
+              </div>
+            </div>
+
+            {/* Row 2: Confusion Matrix (Full Width) */}
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-slate-100 mb-4">Confusion Matrix</h3>
+              <div className="flex items-center justify-center min-h-[500px]">
+                <img 
+                  src="/rf_confusion_matrix.png" 
+                  alt="Random Forest Confusion Matrix" 
+                  className="max-w-full max-h-[500px] object-contain rounded-lg"
+                  style={{ filter: 'brightness(0.9)' }}
+                />
+              </div>
+            </div>
+
+            {/* Row 3: Two Columns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Row 3, Column 1: Feature Importance */}
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-slate-100 mb-4">Feature Importance</h3>
+                <div className="space-y-3">
+                  {Object.entries(qualityData?.feature_importance || {}).map(([feature, importance]) => (
+                    <div key={feature} className="relative">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium text-slate-100">{feature}</span>
+                        <span className="text-sm text-slate-100">{(importance * 100).toFixed(1)}%</span>
                       </div>
-                      {/* Tree Branches */}
-                      <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
-                        <div className="w-0.5 h-4 bg-cyan-500"></div>
+                      <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-cyan-500 rounded-full"
+                          style={{ width: `${importance * 100}%` }}
+                        ></div>
                       </div>
                     </div>
                   ))}
                 </div>
-                {/* Voting Mechanism */}
-                <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4 mt-6">
-                  <p className="text-xs text-center text-slate-100">
-                    Majority Voting System<br/>
-                    (100 Trees Total)
-                  </p>
-                </div>
               </div>
-            </div>
 
-            {/* Classification Process */}
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-slate-100 mb-4">Classification Process</h3>
-              <div className="flex flex-col justify-center min-h-[200px]">
-                <div className="flex items-center space-x-4">
-                  <div className="w-20 h-20 bg-slate-700/50 rounded-full flex items-center justify-center border-2 border-cyan-500">
-                    <span className="text-sm text-slate-100 text-center">Input<br/>Parameters</span>
+              {/* Row 3, Column 2: Classification Process */}
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-slate-100 mb-4">Classification Process</h3>
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                    <p className="text-xs text-center text-slate-100">
+                      1. Input Water Parameters
+                    </p>
                   </div>
-                  <div className="flex-1 h-0.5 bg-cyan-500"></div>
-                  <div className="w-20 h-20 bg-slate-700/50 rounded-full flex items-center justify-center border-2 border-cyan-500">
-                    <span className="text-sm text-slate-100 text-center">Feature<br/>Analysis</span>
+                  <div className="w-0.5 h-4 bg-cyan-500"></div>
+                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                    <p className="text-xs text-center text-slate-100">
+                      2. Feature Analysis
+                    </p>
                   </div>
-                  <div className="flex-1 h-0.5 bg-cyan-500"></div>
-                  <div className="w-20 h-20 bg-slate-700/50 rounded-full flex items-center justify-center border-2 border-cyan-500">
-                    <span className="text-sm text-slate-100 text-center">Grade<br/>Decision</span>
+                  <div className="w-0.5 h-4 bg-cyan-500"></div>
+                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                    <p className="text-xs text-center text-slate-100">
+                      3. Decision Tree Voting
+                    </p>
                   </div>
-                </div>
-                <div className="text-xs text-slate-400 text-center mt-4">
-                  Real-time classification every 30 seconds
-                </div>
-              </div>
-            </div>
-
-            {/* Feature Importance Visualization */}
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-slate-100 mb-4">Feature Importance</h3>
-              <div className="space-y-3">
-                {Object.entries(qualityData?.feature_importance || {}).map(([feature, importance]) => (
-                  <div key={feature} className="relative">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-slate-100">{feature}</span>
-                      <span className="text-sm text-slate-100">{(importance * 100).toFixed(1)}%</span>
-                    </div>
-                    <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-cyan-500 rounded-full"
-                        style={{ width: `${importance * 100}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Model Performance */}
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-slate-100 mb-4">Model Performance</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-700/50 rounded-lg p-4">
-                  <h4 className="text-sm font-semibold text-slate-100 mb-2">Training Data</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-xs text-slate-100">Samples:</span>
-                      <span className="text-xs text-slate-100">15,000+</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-slate-100">Features:</span>
-                      <span className="text-xs text-slate-100">5</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-slate-700/50 rounded-lg p-4">
-                  <h4 className="text-sm font-semibold text-slate-100 mb-2">Model Details</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-xs text-slate-100">Trees:</span>
-                      <span className="text-xs text-slate-100">100</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-slate-100">Max Depth:</span>
-                      <span className="text-xs text-slate-100">10</span>
-                    </div>
+                  <div className="w-0.5 h-4 bg-cyan-500"></div>
+                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                    <p className="text-xs text-center text-slate-100">
+                      4. Generate Quality Grade
+                    </p>
                   </div>
                 </div>
               </div>

@@ -821,162 +821,102 @@ const App = () => {
             <CardTitle className="text-slate-100">Model Information</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* LSTM Architecture */}
+            <div className="space-y-8">
+              {/* Row 1: LSTM Architecture (Full Width) */}
               <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-slate-100 mb-4">LSTM Architecture</h3>
-                <div className="flex flex-col items-center justify-center gap-4 min-h-[200px]">
-                  <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
-                        <span className="text-xs text-slate-100 text-center">Input Layer<br/>(10 timesteps,<br/>5 features)</span>
-        </div>
-      </div>
-                    <div className="hidden md:flex items-center justify-center text-2xl text-slate-100">→</div>
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
-                        <span className="text-xs text-slate-100 text-center">LSTM Layer<br/>(50 units)</span>
-                      </div>
-                    </div>
-                    <div className="hidden md:flex items-center justify-center text-2xl text-slate-100">→</div>
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
-                        <span className="text-xs text-slate-100 text-center">Dense Layer<br/>(25 units)</span>
-                      </div>
-                    </div>
-                    <div className="hidden md:flex items-center justify-center text-2xl text-slate-100">→</div>
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
-                        <span className="text-xs text-slate-100 text-center">Output Layer<br/>(5 features)</span>
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex items-center justify-center min-h-[500px]">
+                  <img 
+                    src="/lstm_architecture.png" 
+                    alt="LSTM Architecture Diagram" 
+                    className="max-w-full max-h-[500px] object-contain rounded-lg"
+                    style={{ filter: 'brightness(0.9)' }}
+                  />
                 </div>
               </div>
 
-            {/* Sliding Window Visualization */}
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-slate-100 mb-4">Sliding Window Approach</h3>
-              <div className="relative overflow-x-auto">
-                <div className="flex items-center space-x-1 mb-4">
-                  {[...Array(10)].map((_, i) => (
-                    <div key={i} className="flex-1 h-12 bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center">
-                      <span className="text-xs text-slate-100">R{i + 1}</span>
-                    </div>
-                  ))}
-                  <div className="flex-1 h-12 bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center">
-                    <span className="text-xs text-slate-100">Pred</span>
-                  </div>
-                </div>
-                <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-                  <div className="relative h-full">
-                    <div className="absolute top-0 left-0 w-[91%] h-full border-2 border-cyan-500 rounded-lg border-dashed"></div>
-                  </div>
-                </div>
-              </div>
-              <p className="text-xs text-slate-400 mt-2">
-                Analyzes 10 consecutive readings to predict the next risk level
-              </p>
-            </div>
-
-              {/* Forecasting Process */}
+              {/* Row 2: Regression Plot (Full Width) */}
               <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-slate-100 mb-4">Forecasting Process</h3>
-                <div className="flex flex-col items-center space-y-4">
-                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
-                    <p className="text-xs text-center text-slate-100">
-                      1. Input Sequence (10 timesteps)
-                    </p>
-                  </div>
-                  <div className="w-0.5 h-4 bg-cyan-500"></div>
-                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
-                    <p className="text-xs text-center text-slate-100">
-                      2. Feature Scaling & Normalization
-                    </p>
-                  </div>
-                  <div className="w-0.5 h-4 bg-cyan-500"></div>
-                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
-                    <p className="text-xs text-center text-slate-100">
-                      3. Generate 24-hour Predictions
-                    </p>
-                  </div>
+                <h3 className="text-lg font-semibold text-slate-100 mb-4">Regression Plot</h3>
+                <div className="flex items-center justify-center min-h-[500px]">
+                  <img 
+                    src="/regression_plot.png" 
+                    alt="Model Performance Regression Plot" 
+                    className="max-w-full max-h-[500px] object-contain rounded-lg"
+                    style={{ filter: 'brightness(0.9)' }}
+                  />
                 </div>
               </div>
 
-              {/* Model Performance */}
-              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-slate-100 mb-4">Model Performance</h3>
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="text-sm font-medium text-slate-100 mb-2">Training Metrics</h4>
-                    <ul className="list-disc list-inside text-sm text-slate-400">
-                      <li>Mean Squared Error: 0.0432</li>
-                      <li>Root Mean Squared Error: 0.208</li>
-                      <li>Mean Absolute Error: 0.187</li>
-                    </ul>
+              {/* Row 3: Two Columns */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Row 3, Column 1: Forecasting Process */}
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-slate-100 mb-4">Forecasting Process</h3>
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                      <p className="text-xs text-center text-slate-100">
+                        1. Input Sequence (15 timesteps)
+                      </p>
+                    </div>
+                    <div className="w-0.5 h-4 bg-cyan-500"></div>
+                    <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                      <p className="text-xs text-center text-slate-100">
+                        2. Feature Scaling & Normalization
+                      </p>
+                    </div>
+                    <div className="w-0.5 h-4 bg-cyan-500"></div>
+                    <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                      <p className="text-xs text-center text-slate-100">
+                        3. LSTM Processing
+                      </p>
+                    </div>
+                    <div className="w-0.5 h-4 bg-cyan-500"></div>
+                    <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                      <p className="text-xs text-center text-slate-100">
+                        4. Generate 24-hour Predictions
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-slate-100 mb-2">Model Capabilities</h4>
-                    <ul className="list-disc list-inside text-sm text-slate-400">
-                      <li>24-hour ahead predictions</li>
-                      <li>Multi-parameter forecasting</li>
-                      <li>Real-time updates</li>
-                    </ul>
+                </div>
+
+                {/* Row 3, Column 2: Sliding Window Approach */}
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-slate-100 mb-4">Sliding Window Approach</h3>
+                  <div className="space-y-2">
+                    {/* Input sequence rows */}
+                    <div className="grid grid-cols-8 gap-1">
+                      {[...Array(8)].map((_, i) => (
+                        <div key={i} className="h-10 bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center">
+                          <span className="text-xs text-slate-100">R{i + 1}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="grid grid-cols-8 gap-1">
+                      {[...Array(7)].map((_, i) => (
+                        <div key={i + 8} className="h-10 bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center">
+                          <span className="text-xs text-slate-100">R{i + 9}</span>
+                        </div>
+                      ))}
+                      {/* Prediction box */}
+                      <div className="h-10 bg-slate-600/70 rounded-lg border-2 border-yellow-500 flex items-center justify-center">
+                        <span className="text-xs text-slate-100 font-semibold">Pred</span>
+                      </div>
+                    </div>
+                    {/* Arrow showing flow */}
+                    <div className="flex items-center justify-center py-2">
+                      <div className="flex items-center space-x-2 text-cyan-400">
+                        <span className="text-xs">Sliding Window</span>
+                        <span className="text-lg">→</span>
+                        <span className="text-xs">Prediction</span>
+                      </div>
+                    </div>
                   </div>
+                  <p className="text-xs text-slate-400 mt-4">
+                    Analyzes 15 consecutive readings to predict the next water quality parameters
+                  </p>
                 </div>
               </div>
-
-              {/* Feature Analysis */}
-              {/* <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-slate-100 mb-4">Feature Analysis</h3>
-                <div className="space-y-3">
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-slate-100">pH Level</span>
-                      <span className="text-sm text-slate-400">92%</span>
-                    </div>
-                    <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '92%' }}></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-slate-100">Temperature</span>
-                      <span className="text-sm text-slate-400">88%</span>
-                    </div>
-                    <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '88%' }}></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-slate-100">TDS</span>
-                      <span className="text-sm text-slate-400">85%</span>
-                    </div>
-                    <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '85%' }}></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-slate-100">Conductivity</span>
-                      <span className="text-sm text-slate-400">82%</span>
-                    </div>
-                    <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '82%' }}></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-slate-100">Turbidity</span>
-                      <span className="text-sm text-slate-400">78%</span>
-                    </div>
-                    <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '78%' }}></div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
             </div>
           </CardContent>
         </Card>

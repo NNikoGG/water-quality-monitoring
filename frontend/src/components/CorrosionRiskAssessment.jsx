@@ -187,9 +187,9 @@ const CorrosionRiskAssessment = () => {
         <CardContent className="p-6">
           <div className="flex flex-col justify-center items-center min-h-[400px] space-y-4">
             <div className="relative">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-600 border-t-red-400"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-600 border-t-cyan-400"></div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="animate-pulse rounded-full h-8 w-8 bg-red-400 opacity-75"></div>
+                <div className="animate-pulse rounded-full h-8 w-8 bg-cyan-400 opacity-75"></div>
               </div>
             </div>
             <div className="text-center space-y-2">
@@ -197,7 +197,7 @@ const CorrosionRiskAssessment = () => {
               <p className="text-slate-400 max-w-md">
                 Analyzing water chemistry parameters to assess potential corrosion risks for infrastructure and equipment...
               </p>
-              <div className="flex items-center justify-center space-x-1 text-red-400">
+              <div className="flex items-center justify-center space-x-1 text-cyan-400">
                 <div className="animate-bounce">⚡</div>
                 <span className="text-sm">Running corrosion models</span>
               </div>
@@ -211,7 +211,7 @@ const CorrosionRiskAssessment = () => {
   if (error) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <p className="text-red-600 font-semibold">{error}</p>
+        <p className="text-cyan-600 font-semibold">{error}</p>
       </div>
     );
   }
@@ -272,97 +272,103 @@ const CorrosionRiskAssessment = () => {
           <CardTitle className="text-slate-100">Model Information</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Architecture Visualization */}
+          <div className="space-y-8">
+            {/* Row 1: LSTM Architecture (Full Width) */}
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-slate-100 mb-4">Neural Network Architecture</h3>
-              <div className="flex flex-col items-center justify-center gap-4">
-                <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
-                      <span className="text-xs text-slate-100 text-center">Input Layer<br/>(10 timesteps)</span>
-                    </div>
-                  </div>
-                  <div className="hidden md:block text-2xl text-slate-100">→</div>
-                  <div className="flex flex-col items-center">
-                    <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
-                      <span className="text-xs text-slate-100 text-center">LSTM Layer<br/>(64 units)</span>
-                    </div>
-                  </div>
-                  <div className="hidden md:block text-2xl text-slate-100">→</div>
-                  <div className="flex flex-col items-center">
-                    <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
-                      <span className="text-xs text-slate-100 text-center">LSTM Layer<br/>(32 units)</span>
-                    </div>
-                  </div>
-                  <div className="hidden md:block text-2xl text-slate-100">→</div>
-                  <div className="flex flex-col items-center">
-                    <div className="w-20 h-20 bg-slate-700/50 rounded-lg flex items-center justify-center border-2 border-cyan-500">
-                      <span className="text-xs text-slate-100 text-center">Dense Layer<br/>(1 unit)</span>
-                    </div>
-                  </div>
-                </div>
+              <h3 className="text-lg font-semibold text-slate-100 mb-4">LSTM Architecture</h3>
+              <div className="flex items-center justify-center min-h-[500px]">
+                <img 
+                  src="/corrosion_architecture.png" 
+                  alt="Corrosion LSTM Architecture Diagram" 
+                  className="max-w-full max-h-[500px] object-contain rounded-lg"
+                  style={{ filter: 'brightness(0.9)' }}
+                />
               </div>
             </div>
 
-            {/* Sliding Window Visualization */}
+            {/* Row 2: Confusion Matrix (Full Width) */}
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-slate-100 mb-4">Sliding Window Approach</h3>
-              <div className="relative overflow-x-auto">
-                <div className="flex items-center space-x-1 mb-4">
-                  {[...Array(10)].map((_, i) => (
-                    <div key={i} className="flex-1 h-12 bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center">
-                      <span className="text-xs text-slate-100">R{i + 1}</span>
-                    </div>
-                  ))}
-                  <div className="flex-1 h-12 bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center">
-                    <span className="text-xs text-slate-100">Pred</span>
-                  </div>
-                </div>
-                <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-                  <div className="relative h-full">
-                    <div className="absolute top-0 left-0 w-[91%] h-full border-2 border-cyan-500 rounded-lg border-dashed"></div>
-                  </div>
-                </div>
-              </div>
-              <p className="text-xs text-slate-400 mt-2">
-                Analyzes 10 consecutive readings to predict the next risk level
-              </p>
-            </div>
-
-            {/* Parameters Visualization */}
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-slate-100 mb-4">Input Parameters</h3>
-              <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
-                {[
-                  { symbol: 'pH', name: 'Acidity', color: 'red' },
-                  { symbol: 'T', name: 'Temperature', color: 'yellow' },
-                  { symbol: 'Tb', name: 'Turbidity', color: 'blue' },
-                  { symbol: 'TDS', name: 'Total Dissolved Solids', color: 'green' },
-                  { symbol: 'C', name: 'Conductivity', color: 'purple' }
-                ].map((param) => (
-                  <div key={param.symbol} className="flex flex-col items-center p-2 bg-slate-700/50 rounded-lg">
-                    <div className="w-10 h-10 bg-slate-600/50 rounded-full flex items-center justify-center mb-1 border border-cyan-500">
-                      <span className="text-sm text-slate-100">{param.symbol}</span>
-                    </div>
-                    <span className="text-xs text-slate-100 text-center">{param.name}</span>
-                  </div>
-                ))}
+              <h3 className="text-lg font-semibold text-slate-100 mb-4">Confusion Matrix</h3>
+              <div className="flex items-center justify-center min-h-[500px]">
+                <img 
+                  src="/corrosion_confusion_matrix.png" 
+                  alt="Corrosion Model Confusion Matrix" 
+                  className="max-w-full max-h-[500px] object-contain rounded-lg"
+                  style={{ filter: 'brightness(0.9)' }}
+                />
               </div>
             </div>
 
-            {/* Update Frequency */}
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-slate-100 mb-4">Real-time Updates</h3>
-              <div className="flex items-center justify-center">
-                <div className="w-20 h-20 rounded-full bg-slate-700/50 border-4 border-cyan-500 flex items-center justify-center relative">
-                  <div className="absolute w-full h-full rounded-full border-4 border-transparent border-t-cyan-500 animate-spin"></div>
-                  <span className="text-slate-100 text-center text-sm">30s<br/>Interval</span>
+            {/* Row 3: Two Columns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Row 3, Column 1: Forecasting Process */}
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-slate-100 mb-4">Forecasting Process</h3>
+                                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                      <p className="text-xs text-center text-slate-100">
+                        1. Input Sequence (10 timesteps)
+                      </p>
+                    </div>
+                  <div className="w-0.5 h-4 bg-cyan-500"></div>
+                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                    <p className="text-xs text-center text-slate-100">
+                      2. Feature Scaling & Normalization
+                    </p>
+                  </div>
+                  <div className="w-0.5 h-4 bg-cyan-500"></div>
+                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                    <p className="text-xs text-center text-slate-100">
+                      3. LSTM Processing
+                    </p>
+                  </div>
+                  <div className="w-0.5 h-4 bg-cyan-500"></div>
+                  <div className="w-full bg-slate-700/50 rounded-lg border-2 border-cyan-500 p-4">
+                    <p className="text-xs text-center text-slate-100">
+                      4. Generate Corrosion Risk
+                    </p>
+                  </div>
                 </div>
               </div>
-              <p className="text-xs text-slate-400 mt-2 text-center">
-                Predictions update every 30 seconds
-              </p>
+
+              {/* Row 3, Column 2: Sliding Window Approach */}
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-slate-100 mb-4">Sliding Window Approach</h3>
+                <div className="space-y-2">
+                  {/* Input sequence rows */}
+                  <div className="grid grid-cols-6 gap-1">
+                    {[...Array(6)].map((_, i) => (
+                      <div key={i} className="h-10 bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center">
+                        <span className="text-xs text-slate-100">R{i + 1}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-6 gap-1">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i + 6} className="h-10 bg-slate-700/50 rounded-lg border-2 border-cyan-500 flex items-center justify-center">
+                        <span className="text-xs text-slate-100">R{i + 7}</span>
+                      </div>
+                    ))}
+                    {/* Prediction box */}
+                    <div className="h-10 bg-slate-600/70 rounded-lg border-2 border-yellow-500 flex items-center justify-center">
+                      <span className="text-xs text-slate-100 font-semibold">Risk</span>
+                    </div>
+                    {/* Empty cell for layout */}
+                    <div></div>
+                  </div>
+                  {/* Arrow showing flow */}
+                  <div className="flex items-center justify-center py-2">
+                    <div className="flex items-center space-x-2 text-cyan-400">
+                      <span className="text-xs">Sliding Window</span>
+                      <span className="text-lg">→</span>
+                      <span className="text-xs">Corrosion Risk</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-400 mt-4">
+                  Analyzes 10 consecutive readings to predict corrosion risk level
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -578,7 +584,7 @@ const CorrosionRiskAssessment = () => {
                   <ul className="space-y-2 text-sm text-slate-400">
                     {getRiskFactors(simulatedParams).map((factor, index) => (
                       <li key={index} className="flex items-center gap-2">
-                        <span className={factor.severity === 'high' ? 'text-red-500' : 'text-yellow-500'}>
+                        <span className={factor.severity === 'high' ? 'text-cyan-500' : 'text-yellow-500'}>
                           {factor.severity === 'high' ? '⚠' : '⚡'}
                         </span>
                         {factor.message}
